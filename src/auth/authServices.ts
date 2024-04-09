@@ -21,6 +21,7 @@ export function useSignInWithGoogle(): AuthSignIn {
     signInWithPopup(auth, provider)
       .then((result) => {
         console.log(result.user);
+        localStorage.setItem("user", JSON.stringify(result.user));
         navigate("/");
         return true;
       })
