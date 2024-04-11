@@ -4,6 +4,7 @@
 
 - [ ] Add default bigrams
 - [ ] Randomize the order of the words in the lesson
+- [ ] Write words and practice a lesson
 - [ ] Add a clock to count the WPM
 
 ## To Do

@@ -10,6 +10,8 @@
 			"@components/*": ["src/components/*"],
 			"@pages/*": ["src/pages/*"],
 			"@auth": ["src/auth/index"],
+			"@models/*": ["src/models/*"],
+			"@data/*": ["src/data/*"],
 		},
     "allowJs": false,
     "skipLibCheck": true,
