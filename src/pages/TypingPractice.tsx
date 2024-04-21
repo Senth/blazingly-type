@@ -1,5 +1,7 @@
 import Radio from "@components/basic/radio";
-import { defaultLessons } from "@models/lesson";
+import { Lesson } from "@models/lesson";
+import useExerciseStore from "@stores/exercise";
+import useLessonStore from "@stores/lesson";
 import React from "react";
 
 export default function TypingPracticePage(): JSX.Element {
@@ -20,10 +22,46 @@ function Selectors(): JSX.Element {
 }
 
 function LessonSelector(): JSX.Element {
-  const lessons = defaultLessons;
-  const [selectedLesson, setSelectedLesson] = React.useState<string>(
-    lessons[0].title,
-  );
+  const { lessons, selectedLesson, setSelectedLesson } = useLessonStore();
+  const { setAllExercises } = useExerciseStore();
+
+  function handleSelectLesson(lesson: Lesson) {
+    setSelectedLesson(lesson);
+
+    const words = [...lesson.words];
+
+    // Randomize words order
+    for (let i = words.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [words[i], words[j]] = [words[j], words[i]];
+    }
+
+    const exercises: string[][] = [];
+
+    // TODO for now, use two words multiplied 4 times as an exercise
+    const combinations = 2;
+    const repetitions = 4;
+
+    let exerciseLength = words.length / combinations;
+    if (exerciseLength % 1 !== 0) {
+      exerciseLength = Math.ceil(exerciseLength);
+    }
+    for (let i = 0; i < words.length; i += combinations) {
+      const exercise: string[] = [];
+
+      for (let r = 0; r < repetitions; r++) {
+        for (let j = 0; j < combinations; j++) {
+          if (i + j < words.length) {
+            exercise.push(words[i + j]);
+          }
+        }
+      }
+
+      exercises.push(exercise);
+    }
+
+    setAllExercises(exercises);
+  }
 
   return (
     <div>
@@ -34,8 +72,8 @@ function LessonSelector(): JSX.Element {
             <Radio
               key={lesson.title}
               label={lesson.title}
-              checked={selectedLesson === lesson.title}
-              onChecked={(): void => setSelectedLesson(lesson.title)}
+              checked={selectedLesson.title === lesson.title}
+              onChecked={(): void => handleSelectLesson(lesson)}
             />
           ),
         )}
@@ -45,9 +83,30 @@ function LessonSelector(): JSX.Element {
 }
 
 function ExerciseWrapper(): JSX.Element {
+  const { allExercises, currentExerciseIndex, nextExercise } =
+    useExerciseStore();
+
+  let currentWords: string[] = [];
+  if (allExercises[currentExerciseIndex]) {
+    currentWords = allExercises[currentExerciseIndex];
+  }
+
   return (
-    <div className="m-auto w-fit">
+    <div className="mt-16 lg:w-[986px] w-full m-auto">
+      <ExerciseWords currentWords={currentWords} />
       <TypingField />
+    </div>
+  );
+}
+
+interface ExerciseWordsProps {
+  currentWords: string[];
+}
+
+function ExerciseWords({ currentWords }: ExerciseWordsProps): JSX.Element {
+  return (
+    <div className="mt-10 bg-sky-800 p-3 text-4xl text-center">
+      {currentWords.join(" ")}
     </div>
   );
 }
@@ -70,9 +129,9 @@ function TypingField(): JSX.Element {
   }
 
   return (
-    <div className="mt-14">
+    <div className="mt-10">
       <input
-        className="max-w-[60rem] m-auto p-2 h-16 placeholder:bottom-2 placeholder:relative text-center text-4xl placeholder:text-lg align-middle text-black rounded-lg"
+        className="p-3 h-16 w-full placeholder:bottom-2 placeholder:relative placeholder:text-lg text-center text-4xl text-black rounded-lg"
         type="text"
         autoCorrect="off"
         autoCapitalize="none"

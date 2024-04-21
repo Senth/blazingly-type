@@ -8,6 +8,7 @@ module.exports = {
       "@auth": path.resolve(__dirname, "src/auth/index"),
       "@models": path.resolve(__dirname, "src/models"),
       "@data": path.resolve(__dirname, "src/data"),
+      "@stores": path.resolve(__dirname, "src/stores"),
     },
   },
 };

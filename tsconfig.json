@@ -12,6 +12,7 @@
 			"@auth": ["src/auth/index"],
 			"@models/*": ["src/models/*"],
 			"@data/*": ["src/data/*"],
+			"@stores/*": ["src/stores/*"],
 		},
     "allowJs": false,
     "skipLibCheck": true,

@@ -9,4 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ➕ Added
 
+- Add default bigrams
 - Login using a Google Account.
+- Add default trigrams, quadgrams, and most common words
