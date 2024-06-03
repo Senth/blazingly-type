@@ -5,9 +5,10 @@ interface ExerciseStore {
   setAllExercises: (exercises: string[][]) => void;
   currentExerciseIndex: number;
   nextExercise: () => void;
+  getCurrentWords: () => string[];
 }
 
-const useExerciseStore = create<ExerciseStore>((set) => ({
+const useExerciseStore = create<ExerciseStore>((set, get) => ({
   allExercises: [],
   setAllExercises: (exercises: string[][]) =>
     set({ allExercises: exercises, currentExerciseIndex: 0 }),
@@ -19,6 +20,10 @@ const useExerciseStore = create<ExerciseStore>((set) => ({
       }
       return { currentExerciseIndex: state.currentExerciseIndex };
     });
+  },
+  getCurrentWords: () => {
+    const { allExercises, currentExerciseIndex } = get();
+    return allExercises[currentExerciseIndex];
   },
 }));
 

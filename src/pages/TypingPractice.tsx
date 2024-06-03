@@ -83,27 +83,19 @@ function LessonSelector(): JSX.Element {
 }
 
 function ExerciseWrapper(): JSX.Element {
-  const { allExercises, currentExerciseIndex, nextExercise } =
-    useExerciseStore();
-
-  let currentWords: string[] = [];
-  if (allExercises[currentExerciseIndex]) {
-    currentWords = allExercises[currentExerciseIndex];
-  }
-
   return (
     <div className="mt-16 lg:w-[986px] w-full m-auto">
-      <ExerciseWords currentWords={currentWords} />
+      <ExerciseWords />
       <TypingField />
     </div>
   );
 }
 
-interface ExerciseWordsProps {
-  currentWords: string[];
-}
-
-function ExerciseWords({ currentWords }: ExerciseWordsProps): JSX.Element {
+function ExerciseWords(): JSX.Element {
+  let currentWords = useExerciseStore((state) => state.getCurrentWords());
+  if (!currentWords) {
+    currentWords = ["Select a lesson"];
+  }
   return (
     <div className="mt-10 bg-sky-800 p-3 text-4xl text-center">
       {currentWords.join(" ")}
@@ -113,6 +105,10 @@ function ExerciseWords({ currentWords }: ExerciseWordsProps): JSX.Element {
 
 function TypingField(): JSX.Element {
   const [input, setInput] = React.useState<string>("");
+  const [currentWords, nextExercise] = useExerciseStore((state) => [
+    state.getCurrentWords() || [],
+    state.nextExercise,
+  ]);
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.key === "Escape") {
@@ -125,13 +121,20 @@ function TypingField(): JSX.Element {
   }
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setInput(event.target.value);
+    if (event.target.value === currentWords.join(" ")) {
+      nextExercise();
+      setInput("");
+    } else {
+      setInput(event.target.value);
+    }
   }
+
+  const isWrong = currentWords.join(" ").substring(0, input.length) !== input;
 
   return (
     <div className="mt-10">
       <input
-        className="p-3 h-16 w-full placeholder:bottom-2 placeholder:relative placeholder:text-lg text-center text-4xl text-black rounded-lg"
+        className={`p-3 h-16 w-full placeholder:bottom-2 placeholder:relative placeholder:text-lg text-center text-4xl text-black rounded-lg ${isWrong && "bg-red-200"}`}
         type="text"
         autoCorrect="off"
         autoCapitalize="none"

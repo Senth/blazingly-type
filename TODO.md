@@ -2,10 +2,9 @@
 
 ## Next Up
 
-- Show the current lesson words
-- Randomize the order of the words in the lesson
-- Write words and practice a lesson
 - Add a clock to count the WPM
+- Add static WPM target
+- Only go to the next exercise if the above target WPM is reached
 
 ## To Do
 
