@@ -2,13 +2,15 @@ import Radio from "@components/basic/radio";
 import { Lesson } from "@models/lesson";
 import useExerciseStore from "@stores/exercise";
 import useLessonStore from "@stores/lesson";
-import React from "react";
+import useWpmCounterStore from "@stores/wpmCounter";
+import React, { useEffect } from "react";
 
 export default function TypingPracticePage(): JSX.Element {
   return (
     <div>
       <Selectors />
       <ExerciseWrapper />
+      <WPMDisplay />
     </div>
   );
 }
@@ -96,6 +98,7 @@ function ExerciseWords(): JSX.Element {
   if (!currentWords) {
     currentWords = ["Select a lesson"];
   }
+
   return (
     <div className="mt-10 bg-sky-800 p-3 text-4xl text-center">
       {currentWords.join(" ")}
@@ -109,27 +112,35 @@ function TypingField(): JSX.Element {
     state.getCurrentWords() || [],
     state.nextExercise,
   ]);
+  const wpmCounter = useWpmCounterStore();
+  const correctInput = currentWords.join(" ");
+
+  useEffect(() => {
+    if (wpmCounter.exercise.length !== correctInput.length) {
+      wpmCounter.setExercise(correctInput);
+    }
+  }, [correctInput, wpmCounter]);
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
-    if (event.key === "Escape") {
-      setInput("");
-      event.preventDefault();
-    } else if (event.key === "Tab") {
+    if (event.key === "Escape" || event.key === "Tab") {
       setInput("");
       event.preventDefault();
     }
   }
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    if (event.target.value === currentWords.join(" ")) {
-      nextExercise();
+    const value = event.target.value;
+    wpmCounter.updateCharTime(value.length - 1);
+
+    if (value === correctInput) {
+      // nextExercise();
       setInput("");
     } else {
-      setInput(event.target.value);
+      setInput(value);
     }
   }
 
-  const isWrong = currentWords.join(" ").substring(0, input.length) !== input;
+  const isWrong = correctInput.substring(0, input.length) !== input;
 
   return (
     <div className="mt-10">
@@ -145,5 +156,24 @@ function TypingField(): JSX.Element {
         onChange={handleChange}
       />
     </div>
+  );
+}
+
+function WPMDisplay(): JSX.Element {
+  const wpmCounter = useWpmCounterStore();
+  const uniqueWords = useExerciseStore((state) => state.getUniqueWords());
+  return (
+    <>
+      <div className="mt-10 text-4xl text-center">
+        {wpmCounter.getWpm()} WPM
+      </div>
+      <ul className="mt-10 text-xl text-center">
+        {uniqueWords.map((word, index) => (
+          <li key={index}>
+            {word}: {wpmCounter.getWordWpm(word)}
+          </li>
+        ))}
+      </ul>
+    </>
   );
 }

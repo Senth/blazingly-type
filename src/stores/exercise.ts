@@ -6,6 +6,7 @@ interface ExerciseStore {
   currentExerciseIndex: number;
   nextExercise: () => void;
   getCurrentWords: () => string[];
+  getUniqueWords: () => string[];
 }
 
 const useExerciseStore = create<ExerciseStore>((set, get) => ({
@@ -23,7 +24,22 @@ const useExerciseStore = create<ExerciseStore>((set, get) => ({
   },
   getCurrentWords: () => {
     const { allExercises, currentExerciseIndex } = get();
+    if (currentExerciseIndex >= allExercises.length) {
+      return [];
+    }
     return allExercises[currentExerciseIndex];
+  },
+  getUniqueWords: () => {
+    const { getCurrentWords } = get();
+    const words = getCurrentWords();
+
+    const uniqueWords: string[] = [];
+    words.forEach((word) => {
+      if (!uniqueWords.includes(word)) {
+        uniqueWords.push(word);
+      }
+    });
+    return uniqueWords;
   },
 }));
 

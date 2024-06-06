@@ -2,15 +2,18 @@
 
 ## Next Up
 
-- Add a clock to count the WPM
-- Add static WPM target
-- Only go to the next exercise if the above target WPM is reached
+- Add Generation Settings
+- Add Threshold Settings with WPM and Accuracy
+- Add accuracy calculation
+- Only go to the next exercise if the above threshold is met
+- Save lesson, including settings to the DB
+- Save exercise progress to the DB
+- Add user word WPM to the DB with a timestamp
 
 ## To Do
 
 - Create custom lessons
 - Create a copy of a lesson, including the default one
-- Improve the clock to count the individual words/n-grams WPM
 - History of practice lessons
 - Create smart practice session of a lesson
   - Practice the slowest words (this will be per lesson). Can specify the number, or percentage
