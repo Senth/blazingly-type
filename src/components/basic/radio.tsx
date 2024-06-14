@@ -1,12 +1,14 @@
 export interface RadioProps {
   label: string;
   checked: boolean;
+  name: string;
   onChecked: () => void;
 }
 
 export default function Radio({
   label,
   checked,
+  name,
   onChecked,
 }: RadioProps): JSX.Element {
   return (
@@ -15,7 +17,7 @@ export default function Radio({
         className="mr-2"
         type="radio"
         id={label}
-        name="lesson"
+        name={name}
         value={label}
         checked={checked}
         onChange={(checked) => {

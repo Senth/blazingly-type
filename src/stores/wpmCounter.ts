@@ -34,22 +34,14 @@ const useWpmCounterStore = create<WpmCounterStore>((set, get) => ({
       return 0;
     }
 
-    for (let i = 0; i <= lastSetCharIndex; i++) {
-      console.log(`chartime[${i}]: ${charTime[i].getTime()}`);
-    }
-
     const startTime = charTime[0];
     const endTime = charTime[lastSetCharIndex];
-    console.log(`getWpm() 0-${lastSetCharIndex}`);
     const time = (endTime.getTime() - startTime.getTime()) / 1000 / 60;
     if (time <= 0) {
       return 0;
     }
 
     const wpm = lastSetCharIndex / charatersPerWord / time;
-    console.log(
-      `getWpm() ${wpm} = ${lastSetCharIndex} / ${charatersPerWord} / ${time}`,
-    );
     return wpm;
   },
   getWordWpm: (word: string) => {
@@ -78,9 +70,6 @@ const useWpmCounterStore = create<WpmCounterStore>((set, get) => ({
     });
 
     const averageWpm = (totalLength / charatersPerWord / totalTime) * 60 * 1000;
-    console.log(
-      `getWordWpm(${word}) ${averageWpm} = ${totalLength} / ${charatersPerWord} / ${totalTime}`,
-    );
 
     return averageWpm;
   },

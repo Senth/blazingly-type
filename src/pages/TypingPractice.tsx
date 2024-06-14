@@ -1,4 +1,5 @@
 import Radio from "@components/basic/radio";
+import { Scopes } from "@models/exercise";
 import { Lesson } from "@models/lesson";
 import useExerciseStore from "@stores/exercise";
 import useLessonStore from "@stores/lesson";
@@ -17,8 +18,10 @@ export default function TypingPracticePage(): JSX.Element {
 
 function Selectors(): JSX.Element {
   return (
-    <div className="m-auto w-fit">
+    <div className="m-auto w-fit flex gap-20">
       <LessonSelector />
+      <ScopeSelector />
+      <GenerationSelector />
     </div>
   );
 }
@@ -73,12 +76,80 @@ function LessonSelector(): JSX.Element {
           (lesson): React.ReactNode => (
             <Radio
               key={lesson.title}
+              name="lesson"
               label={lesson.title}
               checked={selectedLesson.title === lesson.title}
               onChecked={(): void => handleSelectLesson(lesson)}
             />
           ),
         )}
+      </div>
+    </div>
+  );
+}
+
+function ScopeSelector(): JSX.Element {
+  const { scope, setScope } = useExerciseStore();
+
+  return (
+    <div>
+      <h2 className="text-xl font-bold mb-4">Scope</h2>
+      <div className="flex flex-col">
+        {Object.values(Scopes).map((scopeValue) => (
+          <Radio
+            key={scopeValue}
+            name="scope"
+            label={scopeValue}
+            checked={scope === scopeValue}
+            onChecked={() => setScope(scopeValue as Scopes)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function GenerationSelector(): JSX.Element {
+  const { generation, setGeneration } = useExerciseStore();
+
+  function handleCombinationChange(event: React.ChangeEvent<HTMLInputElement>) {
+    // Validate input to a number
+    const value = parseInt(event.target.value);
+    if (isNaN(value)) {
+      return;
+    }
+
+    setGeneration({ ...generation, combinations: value });
+  }
+
+  function handleRepetitionChange(event: React.ChangeEvent<HTMLInputElement>) {
+    // Validate input to a number
+    const value = parseInt(event.target.value);
+    if (isNaN(value)) {
+      return;
+    }
+
+    setGeneration({ ...generation, repetition: value });
+  }
+
+  return (
+    <div>
+      <h2 className="text-xl font-bold mb-4">Generation</h2>
+      <div className="flex flex-col">
+        <label>Combination</label>
+        <input
+          className="w-24 text-black px-1 py-0.5"
+          type="number"
+          value={generation.combinations}
+          onChange={(e) => handleCombinationChange(e)}
+        />
+        <label className="mt-2">Repetition</label>
+        <input
+          className="w-24 text-black px-1 py-0.5"
+          type="number"
+          value={generation.repetition}
+          onChange={(e) => handleRepetitionChange(e)}
+        />
       </div>
     </div>
   );
