@@ -28,44 +28,11 @@ function Selectors(): JSX.Element {
 
 function LessonSelector(): JSX.Element {
   const { lessons, selectedLesson, setSelectedLesson } = useLessonStore();
-  const { setAllExercises } = useExerciseStore();
+  const { setLesson } = useExerciseStore();
 
   function handleSelectLesson(lesson: Lesson) {
     setSelectedLesson(lesson);
-
-    const words = [...lesson.words];
-
-    // Randomize words order
-    for (let i = words.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [words[i], words[j]] = [words[j], words[i]];
-    }
-
-    const exercises: string[][] = [];
-
-    // TODO for now, use two words multiplied 4 times as an exercise
-    const combinations = 2;
-    const repetitions = 4;
-
-    let exerciseLength = words.length / combinations;
-    if (exerciseLength % 1 !== 0) {
-      exerciseLength = Math.ceil(exerciseLength);
-    }
-    for (let i = 0; i < words.length; i += combinations) {
-      const exercise: string[] = [];
-
-      for (let r = 0; r < repetitions; r++) {
-        for (let j = 0; j < combinations; j++) {
-          if (i + j < words.length) {
-            exercise.push(words[i + j]);
-          }
-        }
-      }
-
-      exercises.push(exercise);
-    }
-
-    setAllExercises(exercises);
+    setLesson(lesson);
   }
 
   return (
@@ -129,7 +96,7 @@ function GenerationSelector(): JSX.Element {
       return;
     }
 
-    setGeneration({ ...generation, repetition: value });
+    setGeneration({ ...generation, repetitions: value });
   }
 
   return (
@@ -147,7 +114,7 @@ function GenerationSelector(): JSX.Element {
         <input
           className="w-24 text-black px-1 py-0.5"
           type="number"
-          value={generation.repetition}
+          value={generation.repetitions}
           onChange={(e) => handleRepetitionChange(e)}
         />
       </div>
@@ -158,10 +125,21 @@ function GenerationSelector(): JSX.Element {
 function ExerciseWrapper(): JSX.Element {
   return (
     <div className="mt-16 lg:w-[986px] w-full m-auto">
+      <ExerciseProgress />
       <ExerciseWords />
       <TypingField />
     </div>
   );
+}
+
+function ExerciseProgress(): JSX.Element {
+  const currentExerciseIndex = useExerciseStore(
+    (state) => state.currentExerciseIndex,
+  );
+  const allExercises = useExerciseStore((state) => state.allExercises);
+  const progress = `${currentExerciseIndex + 1}/${allExercises.length}`;
+
+  return <div className="text-center text-2xl">Exercise {progress}</div>;
 }
 
 function ExerciseWords(): JSX.Element {

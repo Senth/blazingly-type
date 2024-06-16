@@ -2,9 +2,6 @@
 
 ## Next Up
 
-- Move the exercises generation to exercise store
-- Add accuracy calculation
-- Add Current lesson
 - Only go to the next exercise if the above threshold is met
 - Save lesson, including settings to the DB
 - Save exercise progress to the DB

@@ -1,4 +1,7 @@
+import { Lesson } from "./lesson";
+
 export interface Exercises {
+  lesson: Lesson;
   allExercises: string[][];
   currentExerciseIndex: number;
   generation: ExerciseGeneration;
@@ -7,7 +10,7 @@ export interface Exercises {
 
 export interface ExerciseGeneration {
   combinations: number;
-  repetition: number;
+  repetitions: number;
 }
 
 export enum Scopes {
