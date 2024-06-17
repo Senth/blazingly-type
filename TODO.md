@@ -2,10 +2,10 @@
 
 ## Next Up
 
-- Only go to the next exercise if the above threshold is met
-- Save lesson, including settings to the DB
-- Save exercise progress to the DB
+- Add security and structure to Firebase rules with Users/Words collection
 - Add user word WPM to the DB with a timestamp
+- Only go to the next exercise if the above threshold is met and accuracy is 100%
+- Save exercise progress to the DB
 
 ## To Do
 
