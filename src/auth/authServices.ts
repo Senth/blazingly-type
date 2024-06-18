@@ -1,4 +1,5 @@
 import { auth } from "./firebaseInit";
+import { doc, getDoc, setDoc, getFirestore } from "firebase/firestore";
 import {
   signInWithPopup,
   GoogleAuthProvider,
@@ -20,7 +21,6 @@ export function useSignInWithGoogle(): AuthSignIn {
   const signIn = () => {
     signInWithPopup(auth, provider)
       .then((result) => {
-        console.log(result.user);
         localStorage.setItem("user", JSON.stringify(result.user));
         navigate("/");
         return true;
@@ -70,3 +70,22 @@ export function useAuthState() {
 
   return { user, loading };
 }
+
+// Create a new user document the first time they sign in
+auth.onAuthStateChanged(async (user) => {
+  if (!user) {
+    return;
+  }
+
+  const userRef = doc(getFirestore(), "users", user.uid);
+  const userDoc = await getDoc(userRef);
+
+  // TODO update the exercise data
+  if (userDoc.exists()) {
+    return;
+  }
+
+  await setDoc(userRef, {
+    uid: user.uid,
+  });
+});

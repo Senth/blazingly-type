@@ -6,6 +6,7 @@ interface LessonStore {
   setLessons: (lessons: Lesson[]) => void;
   selectedLesson: Lesson;
   setSelectedLesson: (lesson: Lesson) => void;
+
 }
 
 const useLessonStore = create<LessonStore>((set) => ({
