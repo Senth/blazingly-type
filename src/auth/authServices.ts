@@ -4,10 +4,9 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
-  User,
 } from "firebase/auth";
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { userProfileActions } from "@stores/userProfile";
 
 const provider = new GoogleAuthProvider();
 
@@ -20,8 +19,7 @@ export function useSignInWithGoogle(): AuthSignIn {
 
   const signIn = () => {
     signInWithPopup(auth, provider)
-      .then((result) => {
-        localStorage.setItem("user", JSON.stringify(result.user));
+      .then(() => {
         navigate("/");
         return true;
       })
@@ -48,34 +46,16 @@ export async function signInWithEmail(email: string, password: string) {
     });
 }
 
-export function useAuthState() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setUser(user);
-      setLoading(false);
-
-      // Save or clear the user data in the local storage
-      if (user) {
-        localStorage.setItem("user", JSON.stringify(user));
-      } else {
-        localStorage.removeItem("user");
-      }
-    });
-
-    return unsubscribe;
-  }, []);
-
-  return { user, loading };
-}
-
 // Create a new user document the first time they sign in
 auth.onAuthStateChanged(async (user) => {
+  const { setUser } = userProfileActions;
+  setUser(user);
+
   if (!user) {
+    localStorage.removeItem("user");
     return;
   }
+  localStorage.setItem("user", JSON.stringify(user));
 
   const userRef = doc(getFirestore(), "users", user.uid);
   const userDoc = await getDoc(userRef);

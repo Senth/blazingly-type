@@ -2,6 +2,12 @@ import { ExerciseGeneration, Exercises, Scopes } from "@models/exercise";
 import { defaultLessons, Lesson } from "@models/lesson";
 import { create } from "zustand";
 
+export interface PreviousWord {
+  word: string;
+  wpm: string;
+  targetWpm: string;
+}
+
 interface ExerciseStore extends Exercises {
   setLesson(lesson: Lesson): void;
   setFromModel: (exercises: Exercises) => void;
@@ -10,6 +16,8 @@ interface ExerciseStore extends Exercises {
   getUniqueWords: () => string[];
   setGeneration: (generation: ExerciseGeneration) => void;
   setScope: (scope: Scopes) => void;
+  previousExercise: PreviousWord[];
+  setPreviousExercise: (previousExercise: PreviousWord[]) => void;
 }
 
 const useExerciseStore = create<ExerciseStore>((set, get) => ({
@@ -65,6 +73,9 @@ const useExerciseStore = create<ExerciseStore>((set, get) => ({
     const allExercises = generateExercise({ ...get(), scope });
     set({ scope, allExercises, currentExerciseIndex: 0 });
   },
+  previousExercise: [],
+  setPreviousExercise: (previousExercise: PreviousWord[]) =>
+    set({ previousExercise }),
 }));
 
 export default useExerciseStore;

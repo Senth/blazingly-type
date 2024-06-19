@@ -14,3 +14,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add default trigrams, quadgrams, and most common words
 - Highlight errors in the practice session
 - Calculate WPM and average word WPM
+- Save the average word WPM to DB to automatically adjust the target WPM and sort by worst words.
+- Show target word WPM for current exercise

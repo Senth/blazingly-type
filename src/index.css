@@ -11,10 +11,25 @@ body {
   -moz-osx-font-smoothing: grayscale;
 
   @apply bg-zinc-800;
-  @apply m-5;
+  @apply h-screen;
+}
+
+#root {
+  @apply h-full;
+  @apply p-5;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+th,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply font-normal;
 }

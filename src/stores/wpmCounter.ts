@@ -7,6 +7,7 @@ interface WpmCounterStore {
   updateCharTime: (index: number) => void;
   exercise: string;
   setExercise: (exercise: string) => void;
+  resetExercise: () => void;
   getWpm: () => number;
   getWordWpm: (word: string) => number;
 }
@@ -20,6 +21,14 @@ const useWpmCounterStore = create<WpmCounterStore>((set, get) => ({
       return;
     }
     charTime[index] = new Date();
+
+    // Special case when entering the first character, we want to reset the date for the remaining characters
+    if (index === 0) {
+      for (let i = 1; i < charTime.length; i++) {
+        charTime[i] = new Date();
+      }
+    }
+
     set({ charTime, lastSetCharIndex: index });
   },
   exercise: "",
@@ -27,6 +36,10 @@ const useWpmCounterStore = create<WpmCounterStore>((set, get) => ({
     const date = new Date();
     set({ charTime: Array(exercise.length).fill(date) });
     set({ exercise });
+  },
+  resetExercise: () => {
+    const date = new Date();
+    set({ charTime: Array(get().exercise.length).fill(date) });
   },
   getWpm: () => {
     const { charTime, lastSetCharIndex } = get();
@@ -70,6 +83,10 @@ const useWpmCounterStore = create<WpmCounterStore>((set, get) => ({
     });
 
     const averageWpm = (totalLength / charatersPerWord / totalTime) * 60 * 1000;
+
+    if (isNaN(averageWpm)) {
+      return 0;
+    }
 
     return averageWpm;
   },
