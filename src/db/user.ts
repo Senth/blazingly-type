@@ -5,7 +5,6 @@ import { User } from "@models/user";
 import { Exercises } from "@models/exercise";
 
 export async function saveExercises(exercises: Exercises): Promise<void> {
-  debugger;
   const userId = getUserId();
   if (!userId) {
     return;

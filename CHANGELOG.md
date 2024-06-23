@@ -17,3 +17,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Save the average word WPM in the cloud to automatically adjust the target WPM and sort by worst words.
 - Show target word WPM for current exercise
 - Exercise progress is saved in the cloud
+- Implement scope to sort by the words that need more practice

@@ -1,4 +1,5 @@
 import { saveExercises } from "@db/user";
+import { getWords } from "@db/word";
 import { ExerciseGeneration, Exercises, Scopes } from "@models/exercise";
 import { defaultLessons, Lesson } from "@models/lesson";
 import { create } from "zustand";
@@ -24,9 +25,9 @@ interface ExerciseStore extends Exercises {
 
 const useExerciseStore = create<ExerciseStore>((set, get) => ({
   lesson: defaultLessons[0],
-  setLesson: (lesson: Lesson) => {
+  setLesson: async (lesson: Lesson) => {
     const store = get();
-    const allExercises = generateExercise({ ...store, lesson });
+    const allExercises = await generateExercise({ ...store, lesson });
     set({ lesson, allExercises, currentExerciseIndex: 0 });
 
     const exercises = getExercises({
@@ -81,13 +82,13 @@ const useExerciseStore = create<ExerciseStore>((set, get) => ({
     combinations: 2,
     repetitions: 4,
   },
-  setGeneration: (generation: ExerciseGeneration) => {
+  setGeneration: async (generation: ExerciseGeneration) => {
     if (generation.combinations <= 0 || generation.repetitions <= 0) {
       return;
     }
 
     const store = get();
-    const allExercises = generateExercise({ ...store, generation });
+    const allExercises = await generateExercise({ ...store, generation });
     set({ generation, allExercises, currentExerciseIndex: 0 });
 
     const exercises = getExercises({
@@ -99,9 +100,9 @@ const useExerciseStore = create<ExerciseStore>((set, get) => ({
     saveToDB(exercises);
   },
   scope: Scopes.worst50,
-  setScope: (scope: Scopes) => {
+  setScope: async (scope: Scopes) => {
     const store = get();
-    const allExercises = generateExercise({ ...store, scope });
+    const allExercises = await generateExercise({ ...store, scope });
     set({ scope, allExercises, currentExerciseIndex: 0 });
 
     const exercises = getExercises({
@@ -120,16 +121,11 @@ const useExerciseStore = create<ExerciseStore>((set, get) => ({
 
 export default useExerciseStore;
 
-function generateExercise(exercises: Exercises): string[][] {
-  let words = [...exercises.lesson.words];
-
-  // TODO Sort by worst words
-  // Randomize words order
-  for (let i = words.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [words[i], words[j]] = [words[j], words[i]];
-  }
-  words = scopeWords(words, exercises.scope);
+async function generateExercise(exercises: Exercises): Promise<string[][]> {
+  const words = await randomizeAndScopeWords(
+    exercises.lesson.words,
+    exercises.scope,
+  );
 
   exercises.allExercises = [];
   const { combinations, repetitions } = exercises.generation;
@@ -152,6 +148,60 @@ function generateExercise(exercises: Exercises): string[][] {
   }
 
   return exercises.allExercises;
+}
+
+async function randomizeAndScopeWords(
+  words: string[],
+  scope: Scopes,
+): Promise<string[]> {
+  // Fetch word statistics from the database
+  const wordStats = await getWords(words);
+
+  // Couldn't fetch word statistics, just randomize the words...
+  if (wordStats.length !== words.length) {
+    for (let i = words.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [words[i], words[j]] = [words[j], words[i]];
+    }
+    return scopeWords(words, scope);
+  }
+
+  // Create sort statistics: WPM - 0.5 * days since last practiced
+  const wordAndStats: [string, number][] = [];
+  for (let i = 0; i < words.length; i++) {
+    console.log(wordStats[i]);
+    const lastWpm = wordStats[i].lastPracticeWpm;
+
+    const differenceInTime =
+      Date.now() - wordStats[i].lastPracticeDatetime.getTime();
+    const daysSinceLastPracticed = differenceInTime / (1000 * 60 * 60 * 24);
+    const decrease = 0.5 * daysSinceLastPracticed;
+
+    const wordSortStat = lastWpm - decrease;
+
+    wordAndStats.push([words[i], wordSortStat]);
+  }
+  console.log("before sort");
+  console.log(wordAndStats);
+
+  // Sort the words by the sort statistics, lowest first
+  wordAndStats.sort((a, b) => {
+    return a[1] - b[1];
+  });
+  console.log("after sort");
+  console.log(wordAndStats);
+
+  // Extract the words from the sorted array
+  let sortedWords = wordAndStats.map((wordAndStat) => wordAndStat[0]);
+
+  // Scope and then randomize the words again
+  sortedWords = scopeWords(sortedWords, scope);
+  for (let i = sortedWords.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [sortedWords[i], sortedWords[j]] = [sortedWords[j], sortedWords[i]];
+  }
+
+  return sortedWords;
 }
 
 function scopeWords(words: string[], scope: Scopes): string[] {

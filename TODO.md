@@ -2,11 +2,13 @@
 
 ## Next Up
 
-- Implement sorting of scope
+- Fix: Backspace should clear error if there is no text
+- Skip button to skip to next exercise
 - Sidebar for lessons
 - Button for adding a new lesson
 - Button for editing existing lesson
 - Button for creating a copy of an existing lesson (inside edit?)
+- Time spent on the current exercise
 
 ## To Do
 
