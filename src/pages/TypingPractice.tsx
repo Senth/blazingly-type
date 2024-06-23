@@ -29,11 +29,10 @@ function Selectors(): JSX.Element {
 }
 
 function LessonSelector(): JSX.Element {
-  const { lessons, selectedLesson, setSelectedLesson } = useLessonStore();
-  const { setLesson } = useExerciseStore();
+  const { lessons } = useLessonStore();
+  const { setLesson, lesson: selectedLesson } = useExerciseStore();
 
   function handleSelectLesson(lesson: Lesson) {
-    setSelectedLesson(lesson);
     setLesson(lesson);
   }
 

@@ -2,7 +2,6 @@
 
 ## Next Up
 
-- Save exercise progress to the DB
 - Implement sorting of scope
 
 ## To Do

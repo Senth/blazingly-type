@@ -51,7 +51,6 @@ export function useWords(words: string[]) {
   const swrResponse = useSWR(wordRequest, fetchWord);
 
   function mutateWords(words: Word[]) {
-    console.log("Mutating words");
     swrResponse.mutate(words);
     words.forEach((word) => {
       if (uid) {

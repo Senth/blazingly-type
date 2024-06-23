@@ -7,6 +7,7 @@ import {
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { userProfileActions } from "@stores/userProfile";
+import { exerciseActions } from "@stores/exercise";
 
 const provider = new GoogleAuthProvider();
 
@@ -60,8 +61,12 @@ auth.onAuthStateChanged(async (user) => {
   const userRef = doc(getFirestore(), "users", user.uid);
   const userDoc = await getDoc(userRef);
 
-  // TODO update the exercise data
+  // Update the exercise data
   if (userDoc.exists()) {
+    if (userDoc.data()?.exercisesJSON) {
+      exerciseActions.setFromModel(JSON.parse(userDoc.data().exercisesJSON));
+    }
+
     return;
   }
 
@@ -69,3 +74,12 @@ auth.onAuthStateChanged(async (user) => {
     uid: user.uid,
   });
 });
+
+export function getUserId(): string | null {
+  const user = localStorage.getItem("user");
+  if (!user) {
+    return null;
+  }
+
+  return JSON.parse(user).uid;
+}

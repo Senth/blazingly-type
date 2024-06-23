@@ -1,3 +1,4 @@
+import { saveExercises } from "@db/user";
 import { ExerciseGeneration, Exercises, Scopes } from "@models/exercise";
 import { defaultLessons, Lesson } from "@models/lesson";
 import { create } from "zustand";
@@ -10,32 +11,52 @@ export interface PreviousWord {
 
 interface ExerciseStore extends Exercises {
   setLesson(lesson: Lesson): void;
-  setFromModel: (exercises: Exercises) => void;
-  nextExercise: () => void;
-  getCurrentWords: () => string[];
-  getUniqueWords: () => string[];
-  setGeneration: (generation: ExerciseGeneration) => void;
-  setScope: (scope: Scopes) => void;
+  setFromModel(exercises: Exercises): void;
+  nextExercise(): void;
+  getCurrentWords(): string[];
+  getUniqueWords(): string[];
+  setGeneration(generation: ExerciseGeneration): void;
+  setScope(scope: Scopes): void;
   previousExercise: PreviousWord[];
-  setPreviousExercise: (previousExercise: PreviousWord[]) => void;
+  setPreviousExercise(previousExercise: PreviousWord[]): void;
+  completed: boolean;
 }
 
 const useExerciseStore = create<ExerciseStore>((set, get) => ({
   lesson: defaultLessons[0],
   setLesson: (lesson: Lesson) => {
-    const allExercises = generateExercise({ ...get(), lesson });
+    const store = get();
+    const allExercises = generateExercise({ ...store, lesson });
     set({ lesson, allExercises, currentExerciseIndex: 0 });
+
+    const exercises = getExercises({
+      ...store,
+      lesson,
+      allExercises,
+      currentExerciseIndex: 0,
+    });
+    saveToDB(exercises);
   },
   setFromModel: (exercises: Exercises) => set({ ...exercises }),
   allExercises: [],
   currentExerciseIndex: 0,
   nextExercise: () => {
-    set((state) => {
-      if (state.currentExerciseIndex < state.allExercises.length - 1) {
-        return { currentExerciseIndex: state.currentExerciseIndex + 1 };
-      }
-      return { currentExerciseIndex: state.currentExerciseIndex };
+    const store = get();
+    let nextIndex = store.currentExerciseIndex + 1;
+    let completed = store.completed;
+    if (nextIndex >= store.allExercises.length) {
+      nextIndex = 0;
+      completed = true;
+    }
+
+    set({ currentExerciseIndex: nextIndex, completed });
+
+    const exercises = getExercises({
+      ...store,
+      currentExerciseIndex: nextIndex,
+      completed,
     });
+    saveToDB(exercises);
   },
   getCurrentWords: () => {
     const { allExercises, currentExerciseIndex } = get();
@@ -65,17 +86,36 @@ const useExerciseStore = create<ExerciseStore>((set, get) => ({
       return;
     }
 
-    const allExercises = generateExercise({ ...get(), generation });
+    const store = get();
+    const allExercises = generateExercise({ ...store, generation });
     set({ generation, allExercises, currentExerciseIndex: 0 });
+
+    const exercises = getExercises({
+      ...store,
+      generation,
+      allExercises,
+      currentExerciseIndex: 0,
+    });
+    saveToDB(exercises);
   },
   scope: Scopes.worst50,
   setScope: (scope: Scopes) => {
-    const allExercises = generateExercise({ ...get(), scope });
+    const store = get();
+    const allExercises = generateExercise({ ...store, scope });
     set({ scope, allExercises, currentExerciseIndex: 0 });
+
+    const exercises = getExercises({
+      ...store,
+      scope,
+      allExercises,
+      currentExerciseIndex: 0,
+    });
+    saveToDB(exercises);
   },
   previousExercise: [],
   setPreviousExercise: (previousExercise: PreviousWord[]) =>
     set({ previousExercise }),
+  completed: false,
 }));
 
 export default useExerciseStore;
@@ -152,3 +192,21 @@ function scopeWords(words: string[], scope: Scopes): string[] {
   }
   return words;
 }
+
+function getExercises(store: ExerciseStore): Exercises {
+  return {
+    lesson: store.lesson,
+    allExercises: store.allExercises,
+    currentExerciseIndex: store.currentExerciseIndex,
+    generation: store.generation,
+    scope: store.scope,
+  };
+}
+
+function saveToDB(exercises: Exercises) {
+  saveExercises(exercises);
+}
+
+export const exerciseActions = {
+  setFromModel: useExerciseStore.getState().setFromModel,
+};
