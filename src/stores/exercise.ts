@@ -28,7 +28,7 @@ const useExerciseStore = create<ExerciseStore>((set, get) => ({
   setLesson: async (lesson: Lesson) => {
     const store = get();
     const allExercises = await generateExercise({ ...store, lesson });
-    set({ lesson, allExercises, currentExerciseIndex: 0 });
+    set({ lesson, allExercises, currentExerciseIndex: 0, completed: false });
 
     const exercises = getExercises({
       ...store,
@@ -89,7 +89,12 @@ const useExerciseStore = create<ExerciseStore>((set, get) => ({
 
     const store = get();
     const allExercises = await generateExercise({ ...store, generation });
-    set({ generation, allExercises, currentExerciseIndex: 0 });
+    set({
+      generation,
+      allExercises,
+      currentExerciseIndex: 0,
+      completed: false,
+    });
 
     const exercises = getExercises({
       ...store,
@@ -103,7 +108,7 @@ const useExerciseStore = create<ExerciseStore>((set, get) => ({
   setScope: async (scope: Scopes) => {
     const store = get();
     const allExercises = await generateExercise({ ...store, scope });
-    set({ scope, allExercises, currentExerciseIndex: 0 });
+    set({ scope, allExercises, currentExerciseIndex: 0, completed: false });
 
     const exercises = getExercises({
       ...store,

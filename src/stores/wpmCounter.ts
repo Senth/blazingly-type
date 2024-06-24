@@ -43,7 +43,7 @@ const useWpmCounterStore = create<WpmCounterStore>((set, get) => ({
   },
   getWpm: () => {
     const { charTime, lastSetCharIndex } = get();
-    if (charTime.length === 0) {
+    if (charTime.length === 0 || lastSetCharIndex > charTime.length) {
       return 0;
     }
 

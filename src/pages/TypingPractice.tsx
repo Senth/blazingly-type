@@ -134,13 +134,23 @@ function ExerciseWrapper(): JSX.Element {
 }
 
 function ExerciseProgress(): JSX.Element {
-  const currentExerciseIndex = useExerciseStore(
-    (state) => state.currentExerciseIndex,
-  );
+  const [currentExerciseIndex, completed] = useExerciseStore((state) => [
+    state.currentExerciseIndex,
+    state.completed,
+  ]);
   const allExercises = useExerciseStore((state) => state.allExercises);
   const progress = `${currentExerciseIndex + 1}/${allExercises.length}`;
 
-  return <div className="text-center text-2xl">Exercise {progress}</div>;
+  let className = "text-center text-2xl";
+  if (completed) {
+    className += " text-green-500";
+  }
+
+  return (
+    <div className={className}>
+      Exercise {progress} {completed && "(completed)"}
+    </div>
+  );
 }
 
 function ExerciseWords(): JSX.Element {
@@ -205,10 +215,8 @@ function TypingField(): JSX.Element {
       for (let i = 0; i < currentWords.length; i++) {
         const word = currentWords[i];
         const wpm = wpmCounter.getWordWpm(word);
-        let targetWpm = 0;
 
-        targetWpm = wordsResponse.data[i].lastPracticeWpm + 0.5;
-
+        const targetWpm = wordsResponse.data[i].lastPracticeWpm;
         if (targetWpm >= wpm) {
           return;
         }
@@ -225,7 +233,7 @@ function TypingField(): JSX.Element {
         previousExercise.push({
           word: currentWords[i],
           wpm: wordWpms[i].toFixed(1),
-          targetWpm: (words[i].lastPracticeWpm + 0.5).toFixed(1),
+          targetWpm: words[i].lastPracticeWpm.toFixed(1),
         });
         words[i] = Word.updateWpm(words[i], wordWpms[i]);
       }
@@ -294,9 +302,7 @@ function WPMDisplay(): JSX.Element {
               !wordsResponse?.isLoading &&
               wordsResponse?.data?.length === uniqueWords.length
             ) {
-              targetWpm = (
-                wordsResponse.data[index].lastPracticeWpm + 0.5
-              ).toFixed(1);
+              targetWpm = wordsResponse.data[index].lastPracticeWpm.toFixed(1);
             }
 
             // Calculate color based on how far from the target WPM the user is
