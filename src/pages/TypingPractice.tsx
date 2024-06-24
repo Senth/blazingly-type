@@ -234,6 +234,9 @@ function TypingField(): JSX.Element {
       setPreviousExercise(previousExercise);
       wordsResponse.mutate(words);
     } else {
+      if (value.length === 0) {
+        setHadError(false);
+      }
       setInput(value);
     }
   }

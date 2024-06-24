@@ -2,8 +2,8 @@
 
 ## Next Up
 
-- Fix: Backspace should clear error if there is no text
 - Skip button to skip to next exercise
+- Publish and deploy the app to a server
 - Sidebar for lessons
 - Button for adding a new lesson
 - Button for editing existing lesson
