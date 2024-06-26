@@ -13,7 +13,7 @@ export interface PreviousWord {
 interface ExerciseStore extends Exercises {
   setLesson(lesson: Lesson): void;
   setFromModel(exercises: Exercises): void;
-  nextExercise(): void;
+  nextExercise(skip?: boolean): void;
   getCurrentWords(): string[];
   getUniqueWords(): string[];
   setGeneration(generation: ExerciseGeneration): void;
@@ -21,108 +21,144 @@ interface ExerciseStore extends Exercises {
   previousExercise: PreviousWord[];
   setPreviousExercise(previousExercise: PreviousWord[]): void;
   completed: boolean;
+  elapsedTime: string;
+  startTime?: Date;
+  startTimer: () => void;
+  timerId?: NodeJS.Timeout;
 }
 
-const useExerciseStore = create<ExerciseStore>((set, get) => ({
-  lesson: defaultLessons[0],
-  setLesson: async (lesson: Lesson) => {
+type Extra = {
+  [key: string]: any;
+};
+
+const useExerciseStore = create<ExerciseStore>((set, get) => {
+  async function resetExercises(extra: Extra) {
     const store = get();
-    const allExercises = await generateExercise({ ...store, lesson });
-    set({ lesson, allExercises, currentExerciseIndex: 0, completed: false });
 
-    const exercises = getExercises({
-      ...store,
-      lesson,
-      allExercises,
-      currentExerciseIndex: 0,
-    });
-    saveToDB(exercises);
-  },
-  setFromModel: (exercises: Exercises) => set({ ...exercises }),
-  allExercises: [],
-  currentExerciseIndex: 0,
-  nextExercise: () => {
-    const store = get();
-    let nextIndex = store.currentExerciseIndex + 1;
-    let completed = store.completed;
-    if (nextIndex >= store.allExercises.length) {
-      nextIndex = 0;
-      completed = true;
-    }
+    clearTimeout(store.timerId);
 
-    set({ currentExerciseIndex: nextIndex, completed });
-
-    const exercises = getExercises({
-      ...store,
-      currentExerciseIndex: nextIndex,
-      completed,
-    });
-    saveToDB(exercises);
-  },
-  getCurrentWords: () => {
-    const { allExercises, currentExerciseIndex } = get();
-    if (currentExerciseIndex >= allExercises.length) {
-      return [];
-    }
-    return allExercises[currentExerciseIndex];
-  },
-  getUniqueWords: () => {
-    const { getCurrentWords } = get();
-    const words = getCurrentWords();
-
-    const uniqueWords: string[] = [];
-    words.forEach((word) => {
-      if (!uniqueWords.includes(word)) {
-        uniqueWords.push(word);
-      }
-    });
-    return uniqueWords;
-  },
-  generation: {
-    combinations: 2,
-    repetitions: 4,
-  },
-  setGeneration: async (generation: ExerciseGeneration) => {
-    if (generation.combinations <= 0 || generation.repetitions <= 0) {
-      return;
-    }
-
-    const store = get();
-    const allExercises = await generateExercise({ ...store, generation });
+    const allExercises = await generateExercise({ ...store, ...extra });
     set({
-      generation,
       allExercises,
       currentExerciseIndex: 0,
       completed: false,
+      elapsedTime: "",
+      startTime: undefined,
+      timerId: undefined,
+      ...extra,
     });
 
-    const exercises = getExercises({
-      ...store,
-      generation,
-      allExercises,
-      currentExerciseIndex: 0,
-    });
-    saveToDB(exercises);
-  },
-  scope: Scopes.worst50,
-  setScope: async (scope: Scopes) => {
+    saveToDB({ ...extra, allExercises });
+  }
+
+  function saveToDB(extra: Extra) {
     const store = get();
-    const allExercises = await generateExercise({ ...store, scope });
-    set({ scope, allExercises, currentExerciseIndex: 0, completed: false });
+    const exercises = getExercises({ ...store, ...extra });
+    saveExercises(exercises);
+  }
 
-    const exercises = getExercises({
-      ...store,
-      scope,
-      allExercises,
-      currentExerciseIndex: 0,
-    });
-    saveToDB(exercises);
-  },
-  previousExercise: [],
-  setPreviousExercise: (previousExercise: PreviousWord[]) =>
-    set({ previousExercise }),
-  completed: false,
-}));
+  function getExercises(extra: Extra): Exercises {
+    const store = get();
+    return {
+      lesson: store.lesson,
+      allExercises: store.allExercises,
+      currentExerciseIndex: store.currentExerciseIndex,
+      generation: store.generation,
+      scope: store.scope,
+      ...extra,
+    };
+  }
+
+  return {
+    lesson: defaultLessons[0],
+    setLesson: async (lesson: Lesson) => {
+      resetExercises({ lesson });
+    },
+    setFromModel: (exercises: Exercises) => set({ ...exercises }),
+    allExercises: [],
+    currentExerciseIndex: 0,
+    nextExercise: (skip?: boolean) => {
+      const store = get();
+      let nextIndex = store.currentExerciseIndex + 1;
+      let completed = store.completed;
+      if (nextIndex >= store.allExercises.length) {
+        nextIndex = 0;
+        completed = true;
+      }
+
+      set({
+        currentExerciseIndex: nextIndex,
+        completed,
+        elapsedTime: "",
+        startTime: undefined,
+        timerId: undefined,
+      });
+
+      if (!skip) {
+        saveToDB({ currentExerciseIndex: nextIndex });
+      }
+    },
+    getCurrentWords: () => {
+      const { allExercises, currentExerciseIndex } = get();
+      if (currentExerciseIndex >= allExercises.length) {
+        return [];
+      }
+      return allExercises[currentExerciseIndex];
+    },
+    getUniqueWords: () => {
+      const { getCurrentWords } = get();
+      const words = getCurrentWords();
+
+      const uniqueWords: string[] = [];
+      words.forEach((word) => {
+        if (!uniqueWords.includes(word)) {
+          uniqueWords.push(word);
+        }
+      });
+      return uniqueWords;
+    },
+    generation: {
+      combinations: 2,
+      repetitions: 4,
+    },
+    setGeneration: async (generation: ExerciseGeneration) => {
+      if (generation.combinations <= 0 || generation.repetitions <= 0) {
+        return;
+      }
+
+      resetExercises({ generation });
+    },
+    scope: Scopes.worst50,
+    setScope: async (scope: Scopes) => {
+      resetExercises({ scope });
+    },
+    previousExercise: [],
+    setPreviousExercise: (previousExercise: PreviousWord[]) =>
+      set({ previousExercise }),
+    completed: false,
+    elapsedTime: "",
+    startTimer: () => {
+      set({ elapsedTime: "0:00", startTime: new Date() });
+
+      function updateTimer() {
+        const { startTime } = get();
+        if (!startTime) {
+          return;
+        }
+
+        let seconds = Math.floor((Date.now() - startTime.getTime()) / 1000);
+        const minutes = Math.floor(seconds / 60);
+        seconds = seconds % 60;
+        const elapsedTime = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+
+        const timerId = setTimeout(updateTimer, 1000);
+        set({ timerId, elapsedTime });
+      }
+
+      updateTimer();
+    },
+  };
+});
 
 export default useExerciseStore;
 
@@ -246,20 +282,6 @@ function scopeWords(words: string[], scope: Scopes): string[] {
       break;
   }
   return words;
-}
-
-function getExercises(store: ExerciseStore): Exercises {
-  return {
-    lesson: store.lesson,
-    allExercises: store.allExercises,
-    currentExerciseIndex: store.currentExerciseIndex,
-    generation: store.generation,
-    scope: store.scope,
-  };
-}
-
-function saveToDB(exercises: Exercises) {
-  saveExercises(exercises);
 }
 
 export const exerciseActions = {

@@ -18,3 +18,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Show target word WPM for current exercise
 - Exercise progress is saved in the cloud
 - Implement scope to sort by the words that need more practice
+- Show time spent on the current exercise
+- Skip exercise when spent more than 3 minutes

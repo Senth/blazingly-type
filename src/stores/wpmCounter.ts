@@ -49,6 +49,11 @@ const useWpmCounterStore = create<WpmCounterStore>((set, get) => ({
 
     const startTime = charTime[0];
     const endTime = charTime[lastSetCharIndex];
+
+    if (!startTime || !endTime) {
+      return 0;
+    }
+
     const time = (endTime.getTime() - startTime.getTime()) / 1000 / 60;
     if (time <= 0) {
       return 0;
@@ -74,6 +79,11 @@ const useWpmCounterStore = create<WpmCounterStore>((set, get) => ({
     wordIndicies.forEach(({ start, end }) => {
       const startTime = charTime[start];
       const endTime = charTime[end];
+
+      if (!startTime || !endTime) {
+        return 0;
+      }
+
       const time = endTime.getTime() - startTime.getTime();
       if (time <= 0) {
         return 0;

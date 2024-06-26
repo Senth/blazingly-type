@@ -2,13 +2,11 @@
 
 ## Next Up
 
-- Skip button to skip to next exercise
 - Publish and deploy the app to a server
 - Sidebar for lessons
 - Button for adding a new lesson
 - Button for editing existing lesson
 - Button for creating a copy of an existing lesson (inside edit?)
-- Time spent on the current exercise
 
 ## To Do
 

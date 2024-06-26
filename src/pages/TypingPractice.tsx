@@ -6,6 +6,7 @@ import { Word } from "@models/word";
 import useExerciseStore, { PreviousWord } from "@stores/exercise";
 import useLessonStore from "@stores/lesson";
 import useWpmCounterStore from "@stores/wpmCounter";
+import useSettingsStore from "@stores/settings";
 import React, { useEffect } from "react";
 
 export default function TypingPracticePage(): JSX.Element {
@@ -169,16 +170,25 @@ function ExerciseWords(): JSX.Element {
 function TypingField(): JSX.Element {
   const [input, setInput] = React.useState<string>("");
   const [hadError, setHadError] = React.useState<boolean>(false);
-  const [currentWords, nextExercise, setPreviousExercise] = useExerciseStore(
-    (state) => [
-      state.getCurrentWords() || [],
-      state.nextExercise,
-      state.setPreviousExercise,
-    ],
-  );
+  const {
+    getCurrentWords,
+    nextExercise,
+    setPreviousExercise,
+    startTime,
+    startTimer,
+    elapsedTime,
+  } = useExerciseStore();
   const wpmCounter = useWpmCounterStore();
+  const currentWords = getCurrentWords() || [];
   const wordsResponse = useWords(currentWords);
   const correctInput = currentWords.join(" ");
+  const timeout = useSettingsStore((state) => state.settings.exercises.timeout);
+
+  if (timeout < elapsedTime) {
+    nextExercise(true);
+    setInput("");
+    setHadError(false);
+  }
 
   useEffect(() => {
     if (wpmCounter.exercise !== correctInput) {
@@ -197,6 +207,15 @@ function TypingField(): JSX.Element {
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     const value = event.target.value;
     wpmCounter.updateCharTime(value.length - 1);
+
+    if (!startTime) {
+      startTimer();
+    }
+
+    // Sometimes we want to ignore space if it's the first character and it's not part of the "word"
+    if (value.length === 1 && value === " " && correctInput[0] !== " ") {
+      return;
+    }
 
     if (value === correctInput) {
       setInput("");
@@ -273,9 +292,10 @@ function TypingField(): JSX.Element {
 
 function WPMDisplay(): JSX.Element {
   const wpmCounter = useWpmCounterStore();
-  const uniqueWords = useExerciseStore((state) => state.getUniqueWords());
-  const previousExercise = useExerciseStore((state) => state.previousExercise);
+  const { getUniqueWords, previousExercise, elapsedTime } = useExerciseStore();
+  const uniqueWords = getUniqueWords();
   const wordsResponse = useWords(uniqueWords);
+
   return (
     <>
       <table className="text-2xl text-left mt-16 lg:w-[986px] w-full m-auto table-fixed">
@@ -284,7 +304,10 @@ function WPMDisplay(): JSX.Element {
             <th className="text-gray-400 pb-4" colSpan={3}>
               Previous
             </th>
-            <th colSpan={3}>Current</th>
+            <th className="pb-4" colSpan={2}>
+              Current
+            </th>
+            <th className="text-gray-400 pb-4 text-2xl">{elapsedTime}</th>
           </tr>
           <tr className="border-b border-slate-500">
             <th className="w-1/6 text-gray-400 text-lg">Word</th>
@@ -323,7 +346,6 @@ function WPMDisplay(): JSX.Element {
                 const red = 255;
                 const green = (255 - (diff / 30) * 255).toFixed(0);
                 styleColor = `rgb(${red},${green},0)`;
-                console.log(classColor);
               } else {
                 classColor = "text-red-500";
               }
