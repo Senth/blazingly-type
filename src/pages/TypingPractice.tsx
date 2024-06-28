@@ -320,7 +320,7 @@ function WPMDisplay(): JSX.Element {
         </thead>
         <tbody>
           {uniqueWords.map((word, index) => {
-            let targetWpm: string | number = "...";
+            let targetWpm: string = "0";
             if (
               !wordsResponse?.isLoading &&
               wordsResponse?.data?.length === uniqueWords.length
