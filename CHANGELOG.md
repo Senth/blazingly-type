@@ -20,3 +20,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Implement scope to sort by the words that need more practice
 - Show time spent on the current exercise
 - Skip exercise when spent more than 3 minutes
+- You can now access it from blazingly-type.com

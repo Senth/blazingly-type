@@ -2,7 +2,6 @@
 
 ## Next Up
 
-- Publish and deploy the app to a server
 - Sidebar for lessons
 - Button for adding a new lesson
 - Button for editing existing lesson
