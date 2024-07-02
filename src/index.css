@@ -16,7 +16,6 @@ body {
 
 #root {
   @apply h-full;
-  @apply p-5;
 }
 
 code {
