@@ -3,13 +3,10 @@
 ## Next Up
 
 - Modal for editing / creating a new lesson
-  - Modal Box for the content centered on the page. Size is content size.
-  - Cancel button
-  - Input for lesson name
-  - Text area for lesson words
-  - Button for saving the lesson
-  - Button for creating a copy of an existing lesson (inside edit?)
+  - Update fields
+  - Save lesson
 - Strip text for lesson menu, show only the content that fits in the box
+- Fix content size when lessons menu is open
 
 ## To Do
 
@@ -18,4 +15,7 @@
 - Improve login page
 - Add login buton
 - Add a profile menu
+- Lesson Menu
+  - Show duplicates of words
+  - Handle errors
 - History of practice lessons

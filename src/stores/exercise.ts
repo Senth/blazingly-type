@@ -210,7 +210,6 @@ async function randomizeAndScopeWords(
   // Create sort statistics: WPM - 0.5 * days since last practiced
   const wordAndStats: [string, number][] = [];
   for (let i = 0; i < words.length; i++) {
-    console.log(wordStats[i]);
     const lastWpm = wordStats[i].lastPracticeWpm;
 
     const differenceInTime =
@@ -222,15 +221,11 @@ async function randomizeAndScopeWords(
 
     wordAndStats.push([words[i], wordSortStat]);
   }
-  console.log("before sort");
-  console.log(wordAndStats);
 
   // Sort the words by the sort statistics, lowest first
   wordAndStats.sort((a, b) => {
     return a[1] - b[1];
   });
-  console.log("after sort");
-  console.log(wordAndStats);
 
   // Extract the words from the sorted array
   let sortedWords = wordAndStats.map((wordAndStat) => wordAndStat[0]);

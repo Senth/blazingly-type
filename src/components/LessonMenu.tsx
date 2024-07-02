@@ -1,6 +1,6 @@
-import { Lesson } from "@models/lesson";
+import { useLessons } from "@db/lesson";
+import { defaultLessons, Lesson } from "@models/lesson";
 import useExerciseStore from "@stores/exercise";
-import useLessonStore from "@stores/lesson";
 import useLessonEditorStore from "@stores/lessonEditor";
 import useUILayoutStore from "@stores/uiLayout";
 import { useState } from "react";
@@ -25,7 +25,7 @@ export function LessonMenuClosed(): JSX.Element | null {
 
 export function LessonMenu(): JSX.Element | null {
   const { isLessonMenuOpen, setLessonMenuOpen } = useUILayoutStore();
-  const { lessons } = useLessonStore();
+  const userLessons = useLessons();
   const { newLesson } = useLessonEditorStore();
 
   if (!isLessonMenuOpen) {
@@ -41,8 +41,17 @@ export function LessonMenu(): JSX.Element | null {
         <MdMenu className="w-8 h-8 mr-3" />
         <span>Lessons</span>
       </div>
+      {userLessons.data && (
+        <div className="flex flex-col gap-1 mb-5">
+          <p className="pl-2 font-medium text-gray-400">Your lessons</p>
+          {userLessons.data.map((lesson) => (
+            <LessonItem key={lesson.id} lesson={lesson} />
+          ))}
+        </div>
+      )}
+      <p className="pl-2 font-medium text-gray-400">Built-in lessons</p>
       <div className="flex flex-col gap-1">
-        {lessons.map((lesson) => (
+        {defaultLessons.map((lesson) => (
           <LessonItem key={lesson.id} lesson={lesson} />
         ))}
       </div>
@@ -96,7 +105,7 @@ function LessonItem({ lesson }: { lesson: Lesson }): JSX.Element {
           className="w-8 h-8"
           onClick={(e) => {
             e.stopPropagation();
-            editLesson(lesson.id);
+            editLesson(lesson);
           }}
         />
       </button>
