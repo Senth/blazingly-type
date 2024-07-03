@@ -85,11 +85,11 @@ function LessonItem({ lesson }: { lesson: Lesson }): JSX.Element {
 
   return (
     <div
-      className={`min-w-72 text-xl flex ${stateClass}`}
+      className={`w-72 text-xl flex ${stateClass}`}
       onClick={() => setLesson(lesson)}
     >
       <div
-        className="p-2"
+        className="p-2 truncate"
         onMouseEnter={() => setHovering(true)}
         onMouseLeave={() => setHovering(false)}
       >

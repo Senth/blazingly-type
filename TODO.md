@@ -2,7 +2,7 @@
 
 ## Next Up
 
-- Strip text for lesson menu, show only the content that fits in the box
+- Fix layout when menu is open
 - Fix content size when lessons menu is open
 
 ## To Do
