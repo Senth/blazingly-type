@@ -9,13 +9,10 @@ import { MdAdd, MdEdit, MdMenu } from "react-icons/md";
 export function LessonMenuClosed(): JSX.Element | null {
   const { isLessonMenuOpen, setLessonMenuOpen } = useUILayoutStore();
 
-  if (isLessonMenuOpen) {
-    return null;
-  }
   return (
     <div
-      className="text-2xl flex  font-medium cursor-pointer p-5 fixed"
-      onClick={() => setLessonMenuOpen(true)}
+      className="text-2xl flex font-medium cursor-pointer"
+      onClick={() => setLessonMenuOpen(!isLessonMenuOpen)}
     >
       <MdMenu className="w-8 h-8 mr-3" />
       <span>Lessons </span>
@@ -24,7 +21,7 @@ export function LessonMenuClosed(): JSX.Element | null {
 }
 
 export function LessonMenu(): JSX.Element | null {
-  const { isLessonMenuOpen, setLessonMenuOpen } = useUILayoutStore();
+  const { isLessonMenuOpen } = useUILayoutStore();
   const userLessons = useLessons();
   const { newLesson } = useLessonEditorStore();
 
@@ -34,13 +31,6 @@ export function LessonMenu(): JSX.Element | null {
 
   return (
     <div className="h-full flex flex-col bg-slate-900">
-      <div
-        onClick={() => setLessonMenuOpen(false)}
-        className="flex text-2xl font-medium cursor-pointer items-center p-5"
-      >
-        <MdMenu className="w-8 h-8 mr-3" />
-        <span>Lessons</span>
-      </div>
       {userLessons.data && (
         <div className="flex flex-col gap-1 mb-5">
           <p className="pl-2 font-medium text-gray-400">Your lessons</p>

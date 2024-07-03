@@ -207,7 +207,7 @@ async function randomizeAndScopeWords(
     return scopeWords(words, scope);
   }
 
-  // Create sort statistics: WPM - 0.5 * days since last practiced
+  // Create sort statistics: WPM * multiplier * days since last practiced
   const wordAndStats: [string, number][] = [];
   for (let i = 0; i < words.length; i++) {
     const lastWpm = wordStats[i].lastPracticeWpm;
@@ -215,7 +215,7 @@ async function randomizeAndScopeWords(
     const differenceInTime =
       Date.now() - wordStats[i].lastPracticeDatetime.getTime();
     const daysSinceLastPracticed = differenceInTime / (1000 * 60 * 60 * 24);
-    const decrease = 0.5 * daysSinceLastPracticed;
+    const decrease = 3 * daysSinceLastPracticed;
 
     const wordSortStat = lastWpm - decrease;
 
