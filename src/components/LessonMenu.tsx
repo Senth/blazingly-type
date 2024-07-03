@@ -21,7 +21,7 @@ export function LessonMenuClosed(): JSX.Element | null {
 }
 
 export function LessonMenu(): JSX.Element | null {
-  const { isLessonMenuOpen, setLessonMenuOpen } = useUILayoutStore();
+  const { isLessonMenuOpen } = useUILayoutStore();
   const userLessons = useLessons();
   const { newLesson } = useLessonEditorStore();
 
