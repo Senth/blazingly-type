@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## 0.1.0 - 2024-07-03
 
 ### ➕ Added
 
@@ -21,3 +21,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Show time spent on the current exercise
 - Skip exercise when spent more than 3 minutes
 - You can now access it from blazingly-type.com
+- Create custom lessons with the ability to copy an existing one

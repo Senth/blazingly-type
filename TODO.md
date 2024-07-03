@@ -2,9 +2,6 @@
 
 ## Next Up
 
-- Modal for editing / creating a new lesson
-  - Update fields
-  - Save lesson
 - Strip text for lesson menu, show only the content that fits in the box
 - Fix content size when lessons menu is open
 
