@@ -185,15 +185,16 @@ function TypingField(): JSX.Element {
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     const value = event.target.value;
-    wpmCounter.updateCharTime(value.length - 1);
-
-    if (!startTime) {
-      startTimer();
-    }
 
     // Sometimes we want to ignore space if it's the first character and it's not part of the "word"
     if (value.length === 1 && value === " " && correctInput[0] !== " ") {
       return;
+    }
+
+    wpmCounter.updateCharTime(value.length - 1);
+
+    if (!startTime) {
+      startTimer();
     }
 
     if (value === correctInput) {

@@ -15,8 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🔄 Changed
 
 - Login is done through a modal instead of /login
+- Increase the WPM multiplier from 0.5 to 3 when calculating next words to practice
 
 ### 🐛 Fixed
+
+- Pressing space at the start does no longer clear the current WPM
 
 ## 0.1.0 - 2024-07-03
 
