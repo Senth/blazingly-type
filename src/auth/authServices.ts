@@ -4,35 +4,15 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
+  signOut,
 } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
 import { userProfileActions } from "@stores/userProfile";
 import { exerciseActions } from "@stores/exercise";
 
 const provider = new GoogleAuthProvider();
 
-export interface AuthSignIn {
-  signIn: () => boolean;
-}
-
-export function useSignInWithGoogle(): AuthSignIn {
-  const navigate = useNavigate();
-
-  const signIn = () => {
-    signInWithPopup(auth, provider)
-      .then(() => {
-        navigate("/");
-        return true;
-      })
-      .catch((error) => {
-        // Handle errors here.
-        console.error(error);
-        return false;
-      });
-
-    return true;
-  };
-  return { signIn };
+export async function signInWithGoogle() {
+  return signInWithPopup(auth, provider);
 }
 
 export async function signInWithEmail(email: string, password: string) {
@@ -44,6 +24,10 @@ export async function signInWithEmail(email: string, password: string) {
       // Handle Errors here.
       console.error(error);
     });
+}
+
+export async function logout() {
+  signOut(auth);
 }
 
 // Create a new user document the first time they sign in
@@ -69,6 +53,7 @@ auth.onAuthStateChanged(async (user) => {
     return;
   }
 
+  // First time logging in, create the user document
   await setDoc(userRef, {
     uid: user.uid,
   });
