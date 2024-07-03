@@ -39,7 +39,6 @@ export async function signInWithEmail(email: string, password: string) {
   signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       // Signed in
-      console.log(userCredential.user);
     })
     .catch((error) => {
       // Handle Errors here.

@@ -1,58 +1,36 @@
 import Radio from "@components/basic/radio";
 import { useWords } from "@db/word";
 import { Scopes } from "@models/exercise";
-import { Lesson } from "@models/lesson";
 import { Word } from "@models/word";
 import useExerciseStore, { PreviousWord } from "@stores/exercise";
-import useLessonStore from "@stores/lesson";
 import useWpmCounterStore from "@stores/wpmCounter";
 import useSettingsStore from "@stores/settings";
 import React, { useEffect } from "react";
+import { LessonMenu, LessonMenuClosed } from "@components/LessonMenu";
 
 export default function TypingPracticePage(): JSX.Element {
   return (
-    <div className="h-full flex flex-col">
-      <Selectors />
-      <ExerciseWrapper />
-      <WPMDisplay />
-    </div>
+    <>
+      <LessonMenuClosed />
+      <div className="h-full w-full flex">
+        <LessonMenu />
+        <div className="grow"></div>
+        <div className="h-full min-w-[400px] max-w-[968px] flex flex-col flex-grow p-5">
+          <Selectors />
+          <ExerciseWrapper />
+          <WPMDisplay />
+        </div>
+        <div className="grow"></div>
+      </div>
+    </>
   );
 }
 
 function Selectors(): JSX.Element {
   return (
     <div className="m-auto w-fit flex gap-20">
-      <LessonSelector />
       <ScopeSelector />
       <GenerationSelector />
-    </div>
-  );
-}
-
-function LessonSelector(): JSX.Element {
-  const { lessons } = useLessonStore();
-  const { setLesson, lesson: selectedLesson } = useExerciseStore();
-
-  function handleSelectLesson(lesson: Lesson) {
-    setLesson(lesson);
-  }
-
-  return (
-    <div>
-      <h2 className="text-2xl mb-4">Lesson</h2>
-      <div className="flex flex-col">
-        {lessons.map(
-          (lesson): React.ReactNode => (
-            <Radio
-              key={lesson.title}
-              name="lesson"
-              label={lesson.title}
-              checked={selectedLesson.title === lesson.title}
-              onChecked={(): void => handleSelectLesson(lesson)}
-            />
-          ),
-        )}
-      </div>
     </div>
   );
 }
@@ -126,7 +104,7 @@ function GenerationSelector(): JSX.Element {
 
 function ExerciseWrapper(): JSX.Element {
   return (
-    <div className="mt-16 lg:w-[986px] w-full m-auto">
+    <div className="mt-16 w-full m-auto">
       <ExerciseProgress />
       <ExerciseWords />
       <TypingField />
@@ -298,7 +276,7 @@ function WPMDisplay(): JSX.Element {
 
   return (
     <>
-      <table className="text-2xl text-left mt-16 lg:w-[986px] w-full m-auto table-fixed">
+      <table className="text-2xl text-left mt-16 w-full m-auto table-fixed">
         <thead>
           <tr className="text-3xl font-normal">
             <th className="text-gray-400 pb-4" colSpan={3}>

@@ -3,11 +3,21 @@ import { tetragrams } from "@data/tetragrams";
 import { trigrams } from "@data/trigrams";
 
 export interface Lesson {
-  id: string;
+  id?: string;
   custom: boolean;
   title: string;
   shortDescription?: string;
   words: string[];
+}
+
+export namespace Lesson {
+  export function New(): Lesson {
+    return {
+      custom: false,
+      title: "",
+      words: [],
+    };
+  }
 }
 
 export const defaultLessons: Lesson[] = [
