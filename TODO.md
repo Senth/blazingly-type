@@ -2,16 +2,15 @@
 
 ## Next Up
 
-- Fix layout when menu is open
-- Fix content size when lessons menu is open
+- Add a top menu
+- Add profile and login/logout button to top menu
+- Logout functionality
+- Add login modal
 
 ## To Do
 
 - Create smart practice session of a lesson
   - Improve slowest, decrease the WPM by 3 per day since the last practice for that word
-- Improve login page
-- Add login buton
-- Add a profile menu
 - Lesson Menu
   - Show duplicates of words
   - Handle errors
