@@ -14,11 +14,13 @@ export default function TypingPracticePage(): JSX.Element {
       <LessonMenuClosed />
       <div className="h-full w-full flex">
         <LessonMenu />
-        <div className="h-full flex flex-col flex-grow p-5">
+        <div className="grow"></div>
+        <div className="h-full min-w-[400px] max-w-[968px] flex flex-col flex-grow p-5">
           <Selectors />
           <ExerciseWrapper />
           <WPMDisplay />
         </div>
+        <div className="grow"></div>
       </div>
     </>
   );
@@ -102,7 +104,7 @@ function GenerationSelector(): JSX.Element {
 
 function ExerciseWrapper(): JSX.Element {
   return (
-    <div className="mt-16 lg:w-[986px] w-full m-auto">
+    <div className="mt-16 w-full m-auto">
       <ExerciseProgress />
       <ExerciseWords />
       <TypingField />
@@ -274,7 +276,7 @@ function WPMDisplay(): JSX.Element {
 
   return (
     <>
-      <table className="text-2xl text-left mt-16 lg:w-[986px] w-full m-auto table-fixed">
+      <table className="text-2xl text-left mt-16 w-full m-auto table-fixed">
         <thead>
           <tr className="text-3xl font-normal">
             <th className="text-gray-400 pb-4" colSpan={3}>
