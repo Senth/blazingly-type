@@ -1,4 +1,4 @@
-name: Deploy to Google Cloud Storage
+name: Install and build for PR verification
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   build_deploy:
-    name: Install, build and deploy
+    name: Install and build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
