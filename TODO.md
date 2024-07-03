@@ -2,10 +2,16 @@
 
 ## Next Up
 
-- Add a top menu
 - Add profile and login/logout button to top menu
 - Logout functionality
 - Add login modal
+- Fix space should not clear the last WPM
+
+- Save timer for exercise when reloading the page
+- Button to manually skip the exercise
+- Pause the time if no input has been made for 5 seconds
+- Show the time left as a bar that decreases/increases
+- Show the time spent on the previous exercise
 
 ## To Do
 

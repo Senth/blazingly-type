@@ -7,11 +7,12 @@ import useWpmCounterStore from "@stores/wpmCounter";
 import useSettingsStore from "@stores/settings";
 import React, { useEffect } from "react";
 import { LessonMenu, LessonMenuClosed } from "@components/LessonMenu";
+import TopBar from "@components/TopBar";
 
 export default function TypingPracticePage(): JSX.Element {
   return (
-    <>
-      <LessonMenuClosed />
+    <div className="h-full w-full flex flex-col">
+      <TopBar menu={<LessonMenuClosed />} />
       <div className="h-full w-full flex">
         <LessonMenu />
         <div className="grow"></div>
@@ -22,7 +23,7 @@ export default function TypingPracticePage(): JSX.Element {
         </div>
         <div className="grow"></div>
       </div>
-    </>
+    </div>
   );
 }
 
