@@ -18,7 +18,10 @@
 
 - Create smart practice session of a lesson
   - Improve slowest, decrease the WPM by 3 per day since the last practice for that word
-- Lesson Menu
+- Lesson Menu - Improvements
   - Show duplicates of words
   - Handle errors
+- Settings page
+  - Exercise skip time
+  - Exercise manual skip button
 - History of practice lessons

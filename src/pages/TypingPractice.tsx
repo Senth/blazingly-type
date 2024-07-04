@@ -31,18 +31,18 @@ export default function TypingPracticePage(): JSX.Element {
 function Selectors(): JSX.Element {
   return (
     <div className="m-auto w-fit flex gap-20">
-      <OrderSelector />
+      <PrioritySelector />
       <LengthSelector />
-      <GenerationSelector />
+      <RepetitionSelector />
     </div>
   );
 }
 
-function OrderSelector(): JSX.Element {
+function PrioritySelector(): JSX.Element {
   const { generation, setGeneration } = useExerciseStore();
 
   return (
-    <div>
+    <div className="flex flex-col items-center">
       <h2 className="text-2xl mb-4">Prioritize</h2>
       <div className="flex flex-col">
         {Object.values(OrderTypes).map((order) => (
@@ -82,7 +82,7 @@ function LengthSelector(): JSX.Element {
   }
 
   return (
-    <div>
+    <div className="flex flex-col items-center">
       <h2 className="text-2xl mb-4">Exercise Length</h2>
       <div className="flex flex-col gap-2">
         <Checkbox
@@ -100,25 +100,35 @@ function LengthSelector(): JSX.Element {
             value={generation.maxExercises}
             onChange={handleExerciseCountChange}
           />
-          exercises
+          exercises.
         </Checkbox>
 
-        <Checkbox label="Time" checked={maxTime.enabled} onChecked={() => {}}>
-          Max
-          <input
-            className="w-12 text-black px-1 py-0.5 mx-2"
-            type="number"
-            value={maxTime.minutes}
-            onChange={handleTimeChange}
-          />
-          minutes
-        </Checkbox>
+        <div className="text-gray-400">
+          <Checkbox
+            label="Time"
+            checked={maxTime.enabled}
+            disabled={true}
+            onChecked={(checked) =>
+              setMaxTime({ ...maxTime, enabled: checked })
+            }
+          >
+            Max
+            <input
+              className="w-12 text-black px-1 py-0.5 mx-2"
+              type="number"
+              disabled={true}
+              value={maxTime.minutes}
+              onChange={handleTimeChange}
+            />
+            minutes.
+          </Checkbox>
+        </div>
       </div>
     </div>
   );
 }
 
-function GenerationSelector(): JSX.Element {
+function RepetitionSelector(): JSX.Element {
   const { generation, setGeneration } = useExerciseStore();
 
   function handleCombinationChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -142,7 +152,7 @@ function GenerationSelector(): JSX.Element {
   }
 
   return (
-    <div>
+    <div className="flex flex-col items-center">
       <h2 className="text-2xl mb-4">Repetition</h2>
       <div>
         <input
