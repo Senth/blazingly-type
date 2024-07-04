@@ -1,6 +1,11 @@
 import { saveExercises } from "@db/user";
 import { getWords } from "@db/word";
-import { ExerciseGeneration, Exercises, Scopes } from "@models/exercise";
+import {
+  ExerciseGeneration,
+  Exercises,
+  MaxTime,
+  OrderTypes,
+} from "@models/exercise";
 import { defaultLessons, Lesson } from "@models/lesson";
 import { create } from "zustand";
 
@@ -17,7 +22,7 @@ interface ExerciseStore extends Exercises {
   getCurrentWords(): string[];
   getUniqueWords(): string[];
   setGeneration(generation: ExerciseGeneration): void;
-  setScope(scope: Scopes): void;
+  setMaxTime(maxTime: MaxTime): void;
   previousExercise: PreviousWord[];
   setPreviousExercise(previousExercise: PreviousWord[]): void;
   completed: boolean;
@@ -27,12 +32,12 @@ interface ExerciseStore extends Exercises {
   timerId?: NodeJS.Timeout;
 }
 
-type Extra = {
+type Replacements = {
   [key: string]: any;
 };
 
 const useExerciseStore = create<ExerciseStore>((set, get) => {
-  async function resetExercises(extra: Extra) {
+  async function resetExercises(extra: Replacements) {
     const store = get();
 
     clearTimeout(store.timerId);
@@ -51,21 +56,21 @@ const useExerciseStore = create<ExerciseStore>((set, get) => {
     saveToDB({ ...extra, allExercises });
   }
 
-  function saveToDB(extra: Extra) {
+  function saveToDB(extra: Replacements) {
     const store = get();
     const exercises = getExercises({ ...store, ...extra });
     saveExercises(exercises);
   }
 
-  function getExercises(extra: Extra): Exercises {
+  function getExercises(replace: Replacements): Exercises {
     const store = get();
     return {
       lesson: store.lesson,
       allExercises: store.allExercises,
       currentExerciseIndex: store.currentExerciseIndex,
       generation: store.generation,
-      scope: store.scope,
-      ...extra,
+      maxTime: store.maxTime,
+      ...replace,
     };
   }
 
@@ -120,17 +125,25 @@ const useExerciseStore = create<ExerciseStore>((set, get) => {
     generation: {
       combinations: 2,
       repetitions: 4,
+      order: OrderTypes.Slowest,
+      maxExercises: 20,
+      maxExercisesEnabled: true,
     },
     setGeneration: async (generation: ExerciseGeneration) => {
       if (generation.combinations <= 0 || generation.repetitions <= 0) {
         return;
       }
-
       resetExercises({ generation });
     },
-    scope: Scopes.worst50,
-    setScope: async (scope: Scopes) => {
-      resetExercises({ scope });
+    maxTime: {
+      minutes: 15,
+      enabled: true,
+    },
+    setMaxTime: (maxTime: MaxTime) => {
+      if (maxTime.minutes <= 0) {
+        return;
+      }
+      set({ maxTime });
     },
     previousExercise: [],
     setPreviousExercise: (previousExercise: PreviousWord[]) =>
@@ -163,10 +176,7 @@ const useExerciseStore = create<ExerciseStore>((set, get) => {
 export default useExerciseStore;
 
 async function generateExercise(exercises: Exercises): Promise<string[][]> {
-  const words = await randomizeAndScopeWords(
-    exercises.lesson.words,
-    exercises.scope,
-  );
+  const words = await randomizeAndScopeWords(exercises.lesson.words);
 
   exercises.allExercises = [];
   const { combinations, repetitions } = exercises.generation;
@@ -191,10 +201,7 @@ async function generateExercise(exercises: Exercises): Promise<string[][]> {
   return exercises.allExercises;
 }
 
-async function randomizeAndScopeWords(
-  words: string[],
-  scope: Scopes,
-): Promise<string[]> {
+async function randomizeAndScopeWords(words: string[]): Promise<string[]> {
   // Fetch word statistics from the database
   const wordStats = await getWords(words);
 
@@ -204,7 +211,7 @@ async function randomizeAndScopeWords(
       const j = Math.floor(Math.random() * (i + 1));
       [words[i], words[j]] = [words[j], words[i]];
     }
-    return scopeWords(words, scope);
+    return words;
   }
 
   // Create sort statistics: WPM * multiplier * days since last practiced
@@ -231,52 +238,12 @@ async function randomizeAndScopeWords(
   let sortedWords = wordAndStats.map((wordAndStat) => wordAndStat[0]);
 
   // Scope and then randomize the words again
-  sortedWords = scopeWords(sortedWords, scope);
   for (let i = sortedWords.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [sortedWords[i], sortedWords[j]] = [sortedWords[j], sortedWords[i]];
   }
 
   return sortedWords;
-}
-
-function scopeWords(words: string[], scope: Scopes): string[] {
-  switch (scope) {
-    case Scopes.worst50:
-      if (words.length > 50) {
-        words.splice(50);
-      }
-      break;
-    case Scopes.worst100:
-      if (words.length > 100) {
-        words.splice(100);
-      }
-      break;
-    case Scopes.worst150:
-      if (words.length > 150) {
-        words.splice(150);
-      }
-      break;
-    case Scopes.worst10percent:
-      const tenPercent = Math.ceil(words.length * 0.1);
-      if (words.length > tenPercent) {
-        words.splice(tenPercent);
-      }
-      break;
-    case Scopes.worst20percent:
-      const twentyPercent = Math.ceil(words.length * 0.2);
-      if (words.length > twentyPercent) {
-        words.splice(twentyPercent);
-      }
-      break;
-    case Scopes.worst30percent:
-      const thirtyPercent = Math.ceil(words.length * 0.3);
-      if (words.length > thirtyPercent) {
-        words.splice(thirtyPercent);
-      }
-      break;
-  }
-  return words;
 }
 
 export const exerciseActions = {

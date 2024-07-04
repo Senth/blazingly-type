@@ -1,6 +1,5 @@
 import Radio from "@components/basic/radio";
 import { useWords } from "@db/word";
-import { Scopes } from "@models/exercise";
 import { Word } from "@models/word";
 import useExerciseStore, { PreviousWord } from "@stores/exercise";
 import useWpmCounterStore from "@stores/wpmCounter";
@@ -8,6 +7,8 @@ import useSettingsStore from "@stores/settings";
 import React, { useEffect } from "react";
 import { LessonMenu, LessonMenuClosed } from "@components/LessonMenu";
 import TopBar from "@components/TopBar";
+import Checkbox from "@components/basic/checkbox";
+import { OrderTypes } from "@models/exercise";
 
 export default function TypingPracticePage(): JSX.Element {
   return (
@@ -30,28 +31,88 @@ export default function TypingPracticePage(): JSX.Element {
 function Selectors(): JSX.Element {
   return (
     <div className="m-auto w-fit flex gap-20">
-      <ScopeSelector />
+      <OrderSelector />
+      <LengthSelector />
       <GenerationSelector />
     </div>
   );
 }
 
-function ScopeSelector(): JSX.Element {
-  const { scope, setScope } = useExerciseStore();
+function OrderSelector(): JSX.Element {
+  const { generation, setGeneration } = useExerciseStore();
 
   return (
     <div>
-      <h2 className="text-2xl mb-4">Scope</h2>
+      <h2 className="text-2xl mb-4">Prioritize</h2>
       <div className="flex flex-col">
-        {Object.values(Scopes).map((scopeValue) => (
+        {Object.values(OrderTypes).map((order) => (
           <Radio
-            key={scopeValue}
-            name="scope"
-            label={scopeValue}
-            checked={scope === scopeValue}
-            onChecked={() => setScope(scopeValue as Scopes)}
+            name="order"
+            label={order}
+            checked={order === generation.order}
+            onChecked={() => setGeneration({ ...generation, order: order })}
           />
         ))}
+      </div>
+    </div>
+  );
+}
+
+function LengthSelector(): JSX.Element {
+  const { generation, setGeneration, maxTime, setMaxTime } = useExerciseStore();
+
+  function handleExerciseCountChange(
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) {
+    const value = parseInt(event.target.value);
+    if (isNaN(value) || value <= 0) {
+      return;
+    }
+
+    setGeneration({ ...generation, maxExercises: value });
+  }
+
+  function handleTimeChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const value = parseInt(event.target.value);
+    if (isNaN(value) || value <= 0) {
+      return;
+    }
+
+    setMaxTime({ minutes: value, enabled: true });
+  }
+
+  return (
+    <div>
+      <h2 className="text-2xl mb-4">Exercise Length</h2>
+      <div className="flex flex-col gap-2">
+        <Checkbox
+          label="exercise-count"
+          checked={generation.maxExercisesEnabled}
+          onChecked={(checked) =>
+            setGeneration({ ...generation, maxExercisesEnabled: checked })
+          }
+        >
+          Max
+          <input
+            className="w-12 text-black px-1 py-0.5 mx-2"
+            type="number"
+            step={5}
+            value={generation.maxExercises}
+            onChange={handleExerciseCountChange}
+          />
+          exercises
+        </Checkbox>
+
+        <Checkbox label="Time" checked={maxTime.enabled} onChecked={() => {}}>
+          Max
+          <input
+            className="w-12 text-black px-1 py-0.5 mx-2"
+            type="number"
+            value={maxTime.minutes}
+            onChange={handleTimeChange}
+          />
+          minutes
+        </Checkbox>
       </div>
     </div>
   );
@@ -63,7 +124,7 @@ function GenerationSelector(): JSX.Element {
   function handleCombinationChange(event: React.ChangeEvent<HTMLInputElement>) {
     // Validate input to a number
     const value = parseInt(event.target.value);
-    if (isNaN(value)) {
+    if (isNaN(value) || value <= 0) {
       return;
     }
 
@@ -73,7 +134,7 @@ function GenerationSelector(): JSX.Element {
   function handleRepetitionChange(event: React.ChangeEvent<HTMLInputElement>) {
     // Validate input to a number
     const value = parseInt(event.target.value);
-    if (isNaN(value)) {
+    if (isNaN(value) || value <= 0) {
       return;
     }
 
@@ -82,22 +143,22 @@ function GenerationSelector(): JSX.Element {
 
   return (
     <div>
-      <h2 className="text-2xl mb-4">Generation</h2>
-      <div className="flex flex-col">
-        <label>Combination</label>
+      <h2 className="text-2xl mb-4">Repetition</h2>
+      <div>
         <input
-          className="w-24 text-black px-1 py-0.5"
+          className="w-8 mx-2 text-black px-1 py-0.5"
           type="number"
           value={generation.combinations}
           onChange={(e) => handleCombinationChange(e)}
         />
-        <label className="mt-2">Repetition</label>
+        words repeated
         <input
-          className="w-24 text-black px-1 py-0.5"
+          className="w-8 mx-2 text-black px-1 py-0.5"
           type="number"
           value={generation.repetitions}
           onChange={(e) => handleRepetitionChange(e)}
         />
+        times.
       </div>
     </div>
   );
