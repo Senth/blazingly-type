@@ -3,8 +3,7 @@
 ## Next Up
 
 - Improve scope
-  - Select number of exercises
-  - Implement special sorting when only time bound
+  - Make the randomize and scope words function work
 - Improve skip
   - Save timer for exercise when reloading the page
   - Button to manually skip the exercise

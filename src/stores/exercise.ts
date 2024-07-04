@@ -130,9 +130,6 @@ const useExerciseStore = create<ExerciseStore>((set, get) => {
       maxExercisesEnabled: true,
     },
     setGeneration: async (generation: ExerciseGeneration) => {
-      if (generation.combinations <= 0 || generation.repetitions <= 0) {
-        return;
-      }
       resetExercises({ generation });
     },
     maxTime: {
@@ -140,9 +137,6 @@ const useExerciseStore = create<ExerciseStore>((set, get) => {
       enabled: true,
     },
     setMaxTime: (maxTime: MaxTime) => {
-      if (maxTime.minutes <= 0) {
-        return;
-      }
       set({ maxTime });
     },
     previousExercise: [],
@@ -176,7 +170,11 @@ const useExerciseStore = create<ExerciseStore>((set, get) => {
 export default useExerciseStore;
 
 async function generateExercise(exercises: Exercises): Promise<string[][]> {
-  const words = await randomizeAndScopeWords(exercises.lesson.words);
+  let words = await sortWords(
+    exercises.lesson.words,
+    exercises.generation.order,
+  );
+  words = filterByMaxExercises(words, exercises.generation);
 
   exercises.allExercises = [];
   const { combinations, repetitions } = exercises.generation;
@@ -201,49 +199,79 @@ async function generateExercise(exercises: Exercises): Promise<string[][]> {
   return exercises.allExercises;
 }
 
-async function randomizeAndScopeWords(words: string[]): Promise<string[]> {
-  // Fetch word statistics from the database
-  const wordStats = await getWords(words);
+async function sortWords(
+  words: string[],
+  order: OrderTypes,
+): Promise<string[]> {
+  switch (order) {
+    case OrderTypes.Random:
+      for (let i = words.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [words[i], words[j]] = [words[j], words[i]];
+      }
+      break;
+    case OrderTypes.Slowest:
+    default:
+      const wordStats = await getWords(words);
 
-  // Couldn't fetch word statistics, just randomize the words...
-  if (wordStats.length !== words.length) {
+      // Couldn't fetch word statistics, just randomize the words...
+      if (wordStats.length !== words.length) {
+        for (let i = words.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [words[i], words[j]] = [words[j], words[i]];
+        }
+        return words;
+      }
+
+      // Create sort statistics: WPM * multiplier * days since last practiced
+      const wordAndStats: [string, number][] = [];
+      for (let i = 0; i < words.length; i++) {
+        const highestWpm = wordStats[i].highestWpm || 1;
+
+        const differenceInTime =
+          Date.now() - wordStats[i].lastPracticeDatetime.getTime();
+        const daysSinceLastPracticed = differenceInTime / (1000 * 60 * 60 * 24);
+        const decrease = 3 * daysSinceLastPracticed;
+
+        const wordSortStat = highestWpm - decrease;
+
+        wordAndStats.push([words[i], wordSortStat]);
+      }
+
+      // Sort the words by the sort statistics, lowest first
+      wordAndStats.sort((a, b) => {
+        return a[1] - b[1];
+      });
+
+      // Extract the words from the sorted array
+      let sortedWords = wordAndStats.map((wordAndStat) => wordAndStat[0]);
+      return sortedWords;
+  }
+
+  return words;
+}
+
+function filterByMaxExercises(
+  words: string[],
+  generation: ExerciseGeneration,
+): string[] {
+  if (generation.maxExercisesEnabled) {
+    const maxWords = Math.min(
+      words.length,
+      generation.maxExercises * generation.combinations,
+    );
+    words = words.slice(0, maxWords);
+  }
+
+  // If not random order, randomize the words
+  if (generation.order !== OrderTypes.Random) {
     for (let i = words.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [words[i], words[j]] = [words[j], words[i]];
     }
-    return words;
   }
 
-  // Create sort statistics: WPM * multiplier * days since last practiced
-  const wordAndStats: [string, number][] = [];
-  for (let i = 0; i < words.length; i++) {
-    const lastWpm = wordStats[i].lastPracticeWpm;
-
-    const differenceInTime =
-      Date.now() - wordStats[i].lastPracticeDatetime.getTime();
-    const daysSinceLastPracticed = differenceInTime / (1000 * 60 * 60 * 24);
-    const decrease = 3 * daysSinceLastPracticed;
-
-    const wordSortStat = lastWpm - decrease;
-
-    wordAndStats.push([words[i], wordSortStat]);
-  }
-
-  // Sort the words by the sort statistics, lowest first
-  wordAndStats.sort((a, b) => {
-    return a[1] - b[1];
-  });
-
-  // Extract the words from the sorted array
-  let sortedWords = wordAndStats.map((wordAndStat) => wordAndStat[0]);
-
-  // Scope and then randomize the words again
-  for (let i = sortedWords.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [sortedWords[i], sortedWords[j]] = [sortedWords[j], sortedWords[i]];
-  }
-
-  return sortedWords;
+  return words;
 }
 
 export const exerciseActions = {
