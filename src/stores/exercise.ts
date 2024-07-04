@@ -134,7 +134,7 @@ const useExerciseStore = create<ExerciseStore>((set, get) => {
     },
     maxTime: {
       minutes: 15,
-      enabled: true,
+      enabled: false,
     },
     setMaxTime: (maxTime: MaxTime) => {
       set({ maxTime });
@@ -263,8 +263,11 @@ function filterByMaxExercises(
     words = words.slice(0, maxWords);
   }
 
-  // If not random order, randomize the words
-  if (generation.order !== OrderTypes.Random) {
+  // Randomize words in certain conditions
+  if (
+    generation.order !== OrderTypes.Random &&
+    generation.maxExercisesEnabled
+  ) {
     for (let i = words.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [words[i], words[j]] = [words[j], words[i]];
