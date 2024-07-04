@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Login is done through a modal instead of /login
 - Increase the WPM multiplier from 0.5 to 3 when calculating next words to practice
+- Removed scope and added exercise length instead
+- Moved sort by worst from scope into prioritize section
+- Simplified the generation section to be called repetition
 
 ### 🐛 Fixed
 

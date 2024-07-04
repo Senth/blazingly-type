@@ -2,6 +2,7 @@ export interface RadioProps {
   label: string;
   checked: boolean;
   name: string;
+  children?: React.ReactNode;
   onChecked: () => void;
 }
 
@@ -9,6 +10,7 @@ export default function Radio({
   label,
   checked,
   name,
+  children,
   onChecked,
 }: RadioProps): JSX.Element {
   return (
@@ -24,7 +26,7 @@ export default function Radio({
           checked && onChecked();
         }}
       />
-      {label}
+      {children ? children : label}
     </label>
   );
 }

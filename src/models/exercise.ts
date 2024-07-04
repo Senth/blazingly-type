@@ -5,19 +5,23 @@ export interface Exercises {
   allExercises: string[][];
   currentExerciseIndex: number;
   generation: ExerciseGeneration;
-  scope: Scopes;
+	maxTime: MaxTime;
+}
+
+export interface MaxTime {
+	minutes: number;
+	enabled: boolean;
 }
 
 export interface ExerciseGeneration {
   combinations: number;
   repetitions: number;
+  order: OrderTypes;
+  maxExercises: number;
+	maxExercisesEnabled: boolean;
 }
 
-export enum Scopes {
-  worst50 = "Worst 50",
-  worst100 = "Worst 100",
-  worst150 = "Worst 150",
-  worst10percent = "Worst 10%",
-  worst20percent = "Worst 20%",
-  worst30percent = "Worst 30%",
+export enum OrderTypes {
+  Slowest = "Slowest",
+  Random = "Random",
 }
