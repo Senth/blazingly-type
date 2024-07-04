@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🐛 Fixed
 
 - Pressing space at the start does no longer clear the current WPM
+- Couldn't create a new lesson as it was treated as a built-in lesson
 
 ## 0.1.0 - 2024-07-03
 

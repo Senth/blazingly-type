@@ -13,7 +13,7 @@ export interface Lesson {
 export namespace Lesson {
   export function New(): Lesson {
     return {
-      custom: false,
+      custom: true,
       title: "",
       words: [],
     };

@@ -2,6 +2,7 @@
 
 ## Next Up
 
+- Bugfix: Button is not centered
 - Advanced settings for lesson
   - Select delimiter
   - Show advanced settings "button"
