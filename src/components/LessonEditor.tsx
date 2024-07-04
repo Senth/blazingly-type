@@ -11,6 +11,10 @@ import Checkbox from "./basic/checkbox";
 export default function LessonEditorModal(): JSX.Element | null {
   const lessonEditor = useLessonEditorStore();
   const lesson = lessonEditor.lesson;
+  const delimiter =
+    (lesson?.settings?.delimiter?.enabled &&
+      lesson?.settings?.delimiter?.value) ||
+    " ";
 
   if (!lessonEditor.isEditorOpen) {
     return null;
@@ -81,11 +85,11 @@ export default function LessonEditorModal(): JSX.Element | null {
       <TextArea
         className="mt-5 grow"
         label="Words, n-grams to practice. Separated by spaces by default"
-        value={lesson.words.join(" ")}
+        value={lesson.words.join(delimiter)}
         placeholder="Type words here..."
         disabled={!lesson.custom}
         onChange={(e) => {
-          lesson.words = e.currentTarget.value.split(" ");
+          lesson.words = e.currentTarget.value.split(delimiter);
           lessonEditor.setLesson(lesson);
         }}
       />
@@ -136,7 +140,7 @@ function AdvancedSettings(): JSX.Element {
         >
           Delimiter:
           <input
-            className="ml-2 w-10"
+            className="ml-2 w-10 text-black"
             name="delimiter"
             disabled={!lesson.custom || !lesson?.settings?.delimiter?.enabled}
             value={lesson?.settings?.delimiter?.value}
