@@ -2,8 +2,6 @@
 
 ## Next Up
 
-- Advanced settings for lesson
-  - Word WPM with spaces
 - Improve skip
   - Save timer for exercise when reloading the page
   - Button to manually skip the exercise

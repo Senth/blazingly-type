@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Top menu with profile and login/logout menu
 - Logout functionality
+- Advanced settings for lessons
+  - Add custom delimiter for words. Allows you to add words with spaces.
+  - Keep spaces will not trim spaces at the end of the word (useful for practicing code)
 
 ### 🔄 Changed
 
