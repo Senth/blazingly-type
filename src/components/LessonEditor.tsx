@@ -194,7 +194,7 @@ function SaveLessonButton(): JSX.Element {
 
         close();
       })
-      .catch((e) => {
+      .catch(() => {
         // TODO show error message that the lesson could not be saved
       });
   }

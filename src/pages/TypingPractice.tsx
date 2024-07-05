@@ -251,9 +251,11 @@ function TypingField(): JSX.Element {
     startTime,
     startTimer,
     elapsedTime,
+    getUniqueWords,
   } = useExerciseStore();
   const wpmCounter = useWpmCounterStore();
   const currentWords = getCurrentWords() || [];
+  const uniqueWords = getUniqueWords();
   const wordsResponse = useWords(currentWords);
   const correctInput = useCorrectInput();
   const timeout = useSettingsStore((state) => state.settings.exercises.timeout);
@@ -266,9 +268,9 @@ function TypingField(): JSX.Element {
 
   useEffect(() => {
     if (wpmCounter.exercise !== correctInput) {
-      wpmCounter.setExercise(correctInput);
+      wpmCounter.setExercise(correctInput, uniqueWords);
     }
-  }, [correctInput, wpmCounter]);
+  }, [correctInput, wpmCounter, uniqueWords]);
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.key === "Escape" || event.key === "Tab") {

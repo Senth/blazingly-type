@@ -5,8 +5,9 @@ interface WpmCounterStore {
   charTime: Date[];
   lastSetCharIndex: number;
   updateCharTime: (index: number) => void;
+  words: string[];
   exercise: string;
-  setExercise: (exercise: string) => void;
+  setExercise: (exercise: string, words: string[]) => void;
   resetExercise: () => void;
   getWpm: () => number;
   getWordWpm: (word: string) => number;
@@ -31,11 +32,12 @@ const useWpmCounterStore = create<WpmCounterStore>((set, get) => ({
 
     set({ charTime, lastSetCharIndex: index });
   },
+  words: [],
   exercise: "",
-  setExercise: (exercise: string) => {
+  setExercise: (exercise: string, words: string[]) => {
     const date = new Date();
     set({ charTime: Array(exercise.length).fill(date) });
-    set({ exercise });
+    set({ exercise, words });
   },
   resetExercise: () => {
     const date = new Date();
@@ -63,12 +65,17 @@ const useWpmCounterStore = create<WpmCounterStore>((set, get) => ({
     return wpm;
   },
   getWordWpm: (word: string) => {
-    const { charTime, lastSetCharIndex, exercise } = get();
+    const { charTime, lastSetCharIndex, exercise, words } = get();
     if (charTime.length === 0) {
       return 0;
     }
 
-    const wordIndicies = findWordIndicies(exercise, word, lastSetCharIndex);
+    const wordIndicies = findWordIndicies(
+      exercise,
+      words,
+      word,
+      lastSetCharIndex,
+    );
 
     if (wordIndicies.length === 0) {
       return 0;
@@ -107,26 +114,94 @@ interface WordIndex {
   end: number;
 }
 
-function findWordIndicies(exercise: string, word: string, maxIndex: number) {
+function findWordIndicies(
+  exercise: string,
+  words: string[],
+  word: string,
+  maxIndex: number,
+) {
+  const wordInfo = getPrevCurrentAndNextInfo(words, word);
+
   let startIndex = 0;
   let result: WordIndex[] = [];
   while ((startIndex = exercise.indexOf(word, startIndex)) !== -1) {
+    // "hello", "world"     -> "hello world hello world"
+    // hello:       		      	s    e     s     e
+    // world:                        s     e     s    e
+    // "hello", " world "   -> "hello world hello world "
+    // hello:       		      	s   e      s    e
+    // world:                       s      e    s      e
+    // " hello ", " world " -> " hello  world  hello  world "
+    // hello:       		      	s     e      s      e
+    // world:                         s      e      s      e
+
+    // Start index
     let wordStartIndex = startIndex;
-    if (wordStartIndex > 0 && exercise[wordStartIndex - 1] === " ") {
-      wordStartIndex -= 1;
+    if (wordStartIndex > 0) {
+      if (wordInfo.current.startsWithSpace) {
+        wordStartIndex -= 1;
+      } else if (exercise[wordStartIndex - 1] === " ") {
+        wordStartIndex -= 1;
+      }
     }
 
+    // End index
     let endIndex = startIndex + word.length - 1;
     if (endIndex > maxIndex) {
       break;
-    } else if (maxIndex !== endIndex && exercise[endIndex + 1] === " ") {
-      endIndex += 1;
+    }
+    if (
+      maxIndex < endIndex &&
+      !wordInfo.current.endsWithSpace &&
+      !wordInfo.next.startsWithSpace
+    ) {
+      endIndex = endIndex + 1;
     }
 
     result.push({ start: wordStartIndex, end: endIndex });
     startIndex = endIndex + 1;
   }
   return result;
+}
+
+interface WordInfo {
+  startsWithSpace: boolean;
+  endsWithSpace: boolean;
+}
+
+interface WordsInfo {
+  current: WordInfo;
+  next: WordInfo;
+}
+
+function getPrevCurrentAndNextInfo(words: string[], word: string): WordsInfo {
+  const next = getNextWord(words, word);
+
+  return {
+    current: getWordInfo(word),
+    next: getWordInfo(next),
+  };
+}
+
+function getWordInfo(word: string): WordInfo {
+  return {
+    startsWithSpace: word[0] === " ",
+    endsWithSpace: word[word.length - 1] === " ",
+  };
+}
+
+function getNextWord(words: string[], word: string): string {
+  if (word.length === 1) {
+    return word;
+  }
+
+  const wordIndex = words.indexOf(word);
+  if (wordIndex === -1) {
+    return "";
+  }
+
+  const nextWord = words[wordIndex === words.length - 1 ? 0 : wordIndex + 1];
+  return nextWord;
 }
 
 export default useWpmCounterStore;
