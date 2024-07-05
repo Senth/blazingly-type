@@ -2,9 +2,6 @@
 
 ## Next Up
 
-- Advanced settings for lesson
-  - Select delimiter
-  - Show advanced settings "button"
 - Improve skip
   - Save timer for exercise when reloading the page
   - Button to manually skip the exercise

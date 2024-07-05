@@ -205,16 +205,40 @@ function ExerciseProgress(): JSX.Element {
 }
 
 function ExerciseWords(): JSX.Element {
-  let currentWords = useExerciseStore((state) => state.getCurrentWords());
-  if (!currentWords) {
-    currentWords = ["Select a lesson"];
-  }
+  const correctInput = useCorrectInput();
 
   return (
-    <div className="mt-10 bg-sky-800 p-3 text-4xl text-center">
-      {currentWords.join(" ")}
+    <div className="mt-10 min-h-16 bg-sky-800 p-3 text-4xl text-center whitespace-pre-wrap">
+      {correctInput}
     </div>
   );
+}
+
+function useCorrectInput(): string {
+  const { getCurrentWords, lesson } = useExerciseStore();
+  const currentWords = getCurrentWords();
+
+  if (!currentWords) {
+    return "";
+  }
+
+  if (!lesson?.settings?.keepSpaces) {
+    return currentWords.join(" ");
+  }
+
+  let correctInput = "";
+  for (let i = 0; i < currentWords.length; i++) {
+    if (
+      i !== 0 &&
+      !currentWords[i - 1].endsWith(" ") &&
+      !currentWords[i].startsWith(" ")
+    ) {
+      correctInput += " ";
+    }
+    correctInput += currentWords[i];
+  }
+
+  return correctInput;
 }
 
 function TypingField(): JSX.Element {
@@ -231,7 +255,7 @@ function TypingField(): JSX.Element {
   const wpmCounter = useWpmCounterStore();
   const currentWords = getCurrentWords() || [];
   const wordsResponse = useWords(currentWords);
-  const correctInput = currentWords.join(" ");
+  const correctInput = useCorrectInput();
   const timeout = useSettingsStore((state) => state.settings.exercises.timeout);
 
   if (timeout < elapsedTime) {
@@ -262,7 +286,10 @@ function TypingField(): JSX.Element {
       return;
     }
 
-    wpmCounter.updateCharTime(value.length - 1);
+    // Update WPM counter
+    if (value.length > input.length) {
+      wpmCounter.updateCharTime(value.length - 1);
+    }
 
     if (!startTime) {
       startTimer();

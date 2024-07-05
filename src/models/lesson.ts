@@ -1,6 +1,7 @@
 import { bigrams } from "@data/bigrams";
 import { tetragrams } from "@data/tetragrams";
 import { trigrams } from "@data/trigrams";
+import { SingleSetting } from "./settings";
 
 export interface Lesson {
   id?: string;
@@ -8,14 +9,21 @@ export interface Lesson {
   title: string;
   shortDescription?: string;
   words: string[];
+  settings?: LessonSettings;
+}
+
+export interface LessonSettings {
+  delimiter?: SingleSetting<string>;
+  keepSpaces?: boolean;
 }
 
 export namespace Lesson {
   export function New(): Lesson {
     return {
-      custom: false,
+      custom: true,
       title: "",
       words: [],
+      settings: {},
     };
   }
 }

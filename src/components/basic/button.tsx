@@ -33,7 +33,7 @@ export default function Button(props: ButtonProps): JSX.Element {
 
   return (
     <button
-      className={`p-3 flex items-center uppercase font-medium rounded-md min-w-36 ${classNameStyling} ${props.className}`}
+      className={`p-3 uppercase font-medium rounded-md min-w-36 ${classNameStyling} ${props.className}`}
       onClick={() => props.onClick()}
     >
       {props.icon && props.icon}
