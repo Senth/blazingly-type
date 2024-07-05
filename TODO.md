@@ -3,8 +3,7 @@
 ## Next Up
 
 - Advanced settings for lesson
-  - Use the new delimiter
-  - Implement keep space logic
+  - Word WPM with spaces
 - Improve skip
   - Save timer for exercise when reloading the page
   - Button to manually skip the exercise

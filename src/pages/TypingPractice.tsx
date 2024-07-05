@@ -286,7 +286,10 @@ function TypingField(): JSX.Element {
       return;
     }
 
-    wpmCounter.updateCharTime(value.length - 1);
+    // Update WPM counter
+    if (value.length > input.length) {
+      wpmCounter.updateCharTime(value.length - 1);
+    }
 
     if (!startTime) {
       startTimer();
