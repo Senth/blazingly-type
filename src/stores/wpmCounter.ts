@@ -151,7 +151,7 @@ function findWordIndicies(
       break;
     }
     if (
-      maxIndex < endIndex &&
+      endIndex < maxIndex &&
       !wordInfo.current.endsWithSpace &&
       !wordInfo.next.startsWithSpace
     ) {
