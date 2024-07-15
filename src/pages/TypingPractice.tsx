@@ -8,7 +8,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { LessonMenu, LessonMenuClosed } from "@components/LessonMenu";
 import TopBar from "@components/TopBar";
 import Checkbox from "@components/basic/checkbox";
-import { OrderTypes, Targets } from "@models/exercise";
+import { OrderTypes, Target, Targets } from "@models/exercise";
 
 export default function TypingPracticePage(): JSX.Element {
   return (
@@ -57,7 +57,7 @@ function Selectors(): JSX.Element {
   return (
     <div
       ref={divRef}
-      className={`w-full grid grid-cols-${columns} justify-center gap-10`}
+      className={`w-full grid grid-cols-${columns} justify-center gap-4`}
     >
       <PrioritySelector />
       <LengthSelector />
@@ -183,21 +183,25 @@ function RepetitionSelector(): JSX.Element {
   return (
     <div className="flex flex-col items-center">
       <h2 className="text-2xl mb-4">Repetition</h2>
-      <div>
-        <input
-          className="w-8 mx-2 text-black px-1 py-0.5"
-          type="number"
-          value={generation.combinations}
-          onChange={(e) => handleCombinationChange(e)}
-        />
-        words repeated
-        <input
-          className="w-8 mx-2 text-black px-1 py-0.5"
-          type="number"
-          value={generation.repetitions}
-          onChange={(e) => handleRepetitionChange(e)}
-        />
-        times.
+      <div className="flex flex-col gap-2">
+        <div>
+          <input
+            className="w-8 mx-2 text-black px-1 py-0.5"
+            type="number"
+            value={generation.combinations}
+            onChange={(e) => handleCombinationChange(e)}
+          />
+          words repeated
+        </div>
+        <div>
+          <input
+            className="w-8 mx-2 text-black px-1 py-0.5"
+            type="number"
+            value={generation.repetitions}
+            onChange={(e) => handleRepetitionChange(e)}
+          />
+          times.
+        </div>
       </div>
     </div>
   );
@@ -214,13 +218,22 @@ function TargetSelector(): JSX.Element {
           name="target"
           label="Percentage"
           checked={target.selected === Targets.Percentage}
-          onChecked={() => setTarget({ selected: Targets.Percentage })}
+          onChecked={() =>
+            setTarget({ ...target, selected: Targets.Percentage })
+          }
         >
           Percentage
           <input
             className="w-12 text-black px-1 py-0.5 mx-2"
             type="number"
             value={target.percentage || 0}
+            onChange={(e) =>
+              setTarget({
+                ...target,
+                selected: Targets.Percentage,
+                percentage: parseInt(e.target.value),
+              })
+            }
           />
           %.
         </Radio>
@@ -228,13 +241,20 @@ function TargetSelector(): JSX.Element {
           name="target"
           label="Fixed"
           checked={target.selected === Targets.Relative}
-          onChecked={() => setTarget({ selected: Targets.Relative })}
+          onChecked={() => setTarget({ ...target, selected: Targets.Relative })}
         >
           Relative
           <input
             className="w-12 text-black px-1 py-0.5 mx-2"
             type="number"
             value={target.relative || 0}
+            onChange={(e) =>
+              setTarget({
+                ...target,
+                selected: Targets.Relative,
+                relative: parseInt(e.target.value),
+              })
+            }
           />
           WPM.
         </Radio>
@@ -321,6 +341,7 @@ function TypingField(): JSX.Element {
     startTimer,
     elapsedTime,
     getUniqueWords,
+    target,
   } = useExerciseStore();
   const wpmCounter = useWpmCounterStore();
   const currentWords = getCurrentWords() || [];
@@ -384,8 +405,11 @@ function TypingField(): JSX.Element {
         const word = currentWords[i];
         const wpm = wpmCounter.getWordWpm(word);
 
-        const targetWpm = wordsResponse.data[i].lastPracticeWpm;
-        if (targetWpm >= wpm) {
+        const targetWpm = calculateTargetWpm(
+          target,
+          wordsResponse.data[i].highestWpm,
+        );
+        if (targetWpm.toFixed(1) >= wpm.toFixed(1)) {
           return;
         }
 
@@ -441,7 +465,8 @@ function TypingField(): JSX.Element {
 
 function WPMDisplay(): JSX.Element {
   const wpmCounter = useWpmCounterStore();
-  const { getUniqueWords, previousExercise, elapsedTime } = useExerciseStore();
+  const { getUniqueWords, previousExercise, elapsedTime, target } =
+    useExerciseStore();
   const uniqueWords = getUniqueWords();
   const wordsResponse = useWords(uniqueWords);
 
@@ -474,7 +499,10 @@ function WPMDisplay(): JSX.Element {
               !wordsResponse?.isLoading &&
               wordsResponse?.data?.length === uniqueWords.length
             ) {
-              targetWpm = wordsResponse.data[index].lastPracticeWpm.toFixed(1);
+              targetWpm = calculateTargetWpm(
+                target,
+                wordsResponse.data[index].highestWpm,
+              ).toFixed(1);
             }
 
             // Calculate color based on how far from the target WPM the user is
@@ -526,4 +554,19 @@ function WPMDisplay(): JSX.Element {
       </div>
     </>
   );
+}
+
+function calculateTargetWpm(target: Target, highestWpm?: number): number {
+  if (!highestWpm) {
+    return 1;
+  }
+
+  switch (target.selected) {
+    case Targets.Percentage:
+      return (highestWpm * target.percentage!) / 100;
+    case Targets.Relative:
+      return highestWpm + target.relative!;
+    default:
+      return highestWpm;
+  }
 }
