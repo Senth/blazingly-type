@@ -86,7 +86,7 @@ const useExerciseStore = create<ExerciseStore>((set, get) => {
     setFromModel: (exercises: Exercises) => set({ ...exercises }),
     allExercises: [],
     currentExerciseIndex: 0,
-    nextExercise: (skip?: boolean) => {
+    nextExercise: () => {
       const store = get();
       let nextIndex = store.currentExerciseIndex + 1;
       let completed = store.completed;
@@ -103,9 +103,7 @@ const useExerciseStore = create<ExerciseStore>((set, get) => {
         timerId: undefined,
       });
 
-      if (!skip) {
-        saveToDB({ currentExerciseIndex: nextIndex });
-      }
+      saveToDB({ currentExerciseIndex: nextIndex });
     },
     getCurrentWords: () => {
       const { allExercises, currentExerciseIndex } = get();
@@ -173,8 +171,9 @@ const useExerciseStore = create<ExerciseStore>((set, get) => {
       percentage: 95,
       relative: -5,
     },
-    setTarget: (threshold: Target) => {
-      set({ target: threshold });
+    setTarget: (target: Target) => {
+      set({ target });
+      saveToDB({ target });
     },
   };
 });
