@@ -4,7 +4,7 @@ import { Word } from "@models/word";
 import useExerciseStore, { PreviousWord } from "@stores/exercise";
 import useWpmCounterStore from "@stores/wpmCounter";
 import useSettingsStore from "@stores/settings";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { LessonMenu, LessonMenuClosed } from "@components/LessonMenu";
 import TopBar from "@components/TopBar";
 import Checkbox from "@components/basic/checkbox";
@@ -29,8 +29,36 @@ export default function TypingPracticePage(): JSX.Element {
 }
 
 function Selectors(): JSX.Element {
+  const divRef = useRef<HTMLDivElement>(null);
+  const [columns, setColumns] = useState(4);
+
+  useEffect(() => {
+    const div = divRef.current;
+    if (!div) {
+      return;
+    }
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        const { width } = entry.contentRect;
+        if (width < 900) {
+          setColumns(2);
+        } else {
+          setColumns(4);
+        }
+      }
+    });
+
+    resizeObserver.observe(div);
+
+    return () => resizeObserver.unobserve(div);
+  }, [divRef]);
+
   return (
-    <div className="m-auto w-fit flex gap-16">
+    <div
+      ref={divRef}
+      className={`w-full grid grid-cols-${columns} justify-center gap-10`}
+    >
       <PrioritySelector />
       <LengthSelector />
       <RepetitionSelector />
