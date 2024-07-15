@@ -8,7 +8,7 @@ import React, { useEffect } from "react";
 import { LessonMenu, LessonMenuClosed } from "@components/LessonMenu";
 import TopBar from "@components/TopBar";
 import Checkbox from "@components/basic/checkbox";
-import { OrderTypes } from "@models/exercise";
+import { OrderTypes, Targets } from "@models/exercise";
 
 export default function TypingPracticePage(): JSX.Element {
   return (
@@ -30,10 +30,11 @@ export default function TypingPracticePage(): JSX.Element {
 
 function Selectors(): JSX.Element {
   return (
-    <div className="m-auto w-fit flex gap-20">
+    <div className="m-auto w-fit flex gap-16">
       <PrioritySelector />
       <LengthSelector />
       <RepetitionSelector />
+      <TargetSelector />
     </div>
   );
 }
@@ -169,6 +170,46 @@ function RepetitionSelector(): JSX.Element {
           onChange={(e) => handleRepetitionChange(e)}
         />
         times.
+      </div>
+    </div>
+  );
+}
+
+function TargetSelector(): JSX.Element {
+  const { target, setTarget } = useExerciseStore();
+
+  return (
+    <div className="flex flex-col items-center">
+      <h2 className="text-2xl mb-4">Target</h2>
+      <div className="flex flex-col gap-2">
+        <Radio
+          name="target"
+          label="Percentage"
+          checked={target.selected === Targets.Percentage}
+          onChecked={() => setTarget({ selected: Targets.Percentage })}
+        >
+          Percentage
+          <input
+            className="w-12 text-black px-1 py-0.5 mx-2"
+            type="number"
+            value={target.percentage || 0}
+          />
+          %.
+        </Radio>
+        <Radio
+          name="target"
+          label="Fixed"
+          checked={target.selected === Targets.Relative}
+          onChecked={() => setTarget({ selected: Targets.Relative })}
+        >
+          Relative
+          <input
+            className="w-12 text-black px-1 py-0.5 mx-2"
+            type="number"
+            value={target.relative || 0}
+          />
+          WPM.
+        </Radio>
       </div>
     </div>
   );

@@ -5,6 +5,8 @@ import {
   Exercises,
   MaxTime,
   OrderTypes,
+  Target,
+  Targets,
 } from "@models/exercise";
 import { defaultLessons, Lesson } from "@models/lesson";
 import { create } from "zustand";
@@ -30,6 +32,7 @@ interface ExerciseStore extends Exercises {
   startTime?: Date;
   startTimer: () => void;
   timerId?: NodeJS.Timeout;
+  setTarget(target: Target): void;
 }
 
 type Replacements = {
@@ -70,6 +73,7 @@ const useExerciseStore = create<ExerciseStore>((set, get) => {
       currentExerciseIndex: store.currentExerciseIndex,
       generation: store.generation,
       maxTime: store.maxTime,
+      target: store.target,
       ...replace,
     };
   }
@@ -163,6 +167,14 @@ const useExerciseStore = create<ExerciseStore>((set, get) => {
       }
 
       updateTimer();
+    },
+    target: {
+      selected: Targets.Percentage,
+      percentage: 95,
+      relative: -5,
+    },
+    setTarget: (threshold: Target) => {
+      set({ target: threshold });
     },
   };
 });
