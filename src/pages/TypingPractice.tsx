@@ -351,7 +351,7 @@ function TypingField(): JSX.Element {
   const timeout = useSettingsStore((state) => state.settings.exercises.timeout);
 
   if (timeout < elapsedTime) {
-    nextExercise(true);
+    nextExercise();
     setInput("");
     setHadError(false);
   }
@@ -409,7 +409,10 @@ function TypingField(): JSX.Element {
           target,
           wordsResponse.data[i].highestWpm,
         );
-        if (targetWpm.toFixed(1) >= wpm.toFixed(1)) {
+        if (parseFloat(targetWpm.toFixed(1)) >= parseFloat(wpm.toFixed(1))) {
+          console.log(
+            `Word ${word} didn't meet the target WPM of ${targetWpm.toFixed(1)} with ${wpm.toFixed(1)} WPM`,
+          );
           return;
         }
 
@@ -425,7 +428,7 @@ function TypingField(): JSX.Element {
         previousExercise.push({
           word: currentWords[i],
           wpm: wordWpms[i].toFixed(1),
-          targetWpm: words[i].lastPracticeWpm.toFixed(1),
+          targetWpm: calculateTargetWpm(target, words[i].highestWpm).toFixed(1),
         });
         words[i] = Word.updateWpm(words[i], wordWpms[i]);
       }

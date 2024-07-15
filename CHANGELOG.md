@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Word WPM now only uses the first decimal when checking if reached target WPM. Previously there was a chance
   that the WPM was 0.01 off the target WPM, so it would display as green but was not met.
+- Now saves the progress when automatically skipping the exercise
 
 ## 0.2.0 - 2024-07-05
 
