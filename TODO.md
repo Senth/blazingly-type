@@ -2,7 +2,6 @@
 
 ## Next Up
 
-- Threshold for WPM: Contine if the WPM is above percentage of highest WPM.
 - Only save the exercises progress locally, not necessary to store in the cloud and costs extra
   - Fix issue where skipping to next exercise doesn't save the progress
 - Better caching for lessons and words.
