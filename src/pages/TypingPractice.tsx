@@ -9,6 +9,7 @@ import { LessonMenu, LessonMenuClosed } from "@components/LessonMenu";
 import TopBar from "@components/TopBar";
 import Checkbox from "@components/basic/checkbox";
 import { OrderTypes, Target, Targets } from "@models/exercise";
+import useTimerStore from "@stores/timer";
 
 export default function TypingPracticePage(): JSX.Element {
   return (
@@ -335,9 +336,6 @@ function TypingField(): JSX.Element {
     getCurrentWords,
     nextExercise,
     setPreviousExercise,
-    startTime,
-    startTimer,
-    elapsedTime,
     getUniqueWords,
     target,
   } = useExerciseStore();
@@ -347,8 +345,9 @@ function TypingField(): JSX.Element {
   const wordsResponse = useWords(currentWords);
   const correctInput = useCorrectInput();
   const timeout = useSettingsStore((state) => state.settings.exercises.timeout);
+  const timer = useTimerStore();
 
-  if (timeout < elapsedTime) {
+  if (timeout < timer.getElapsedTime()) {
     nextExercise();
     setInput("");
     setHadError(false);
@@ -381,9 +380,8 @@ function TypingField(): JSX.Element {
       wpmCounter.updateCharTime(value.length - 1);
     }
 
-    if (!startTime) {
-      startTimer();
-    }
+    // Update the timer
+    timer.keyPressed();
 
     if (value === correctInput) {
       setInput("");
@@ -463,10 +461,10 @@ function TypingField(): JSX.Element {
 
 function WPMDisplay(): JSX.Element {
   const wpmCounter = useWpmCounterStore();
-  const { getUniqueWords, previousExercise, elapsedTime, target } =
-    useExerciseStore();
+  const { getUniqueWords, previousExercise, target } = useExerciseStore();
   const uniqueWords = getUniqueWords();
   const wordsResponse = useWords(uniqueWords);
+  const timer = useTimerStore();
 
   return (
     <>
@@ -479,7 +477,9 @@ function WPMDisplay(): JSX.Element {
             <th className="pb-4" colSpan={2}>
               Current
             </th>
-            <th className="text-gray-400 pb-4 text-2xl">{elapsedTime}</th>
+            <th className="text-gray-400 pb-4 text-2xl">
+              {timer.getElapsedTime()}
+            </th>
           </tr>
           <tr className="border-b border-slate-500">
             <th className="w-1/6 text-gray-400 text-lg">Word</th>

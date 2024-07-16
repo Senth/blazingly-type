@@ -10,6 +10,7 @@ import {
 import { defaultLessons, Lesson } from "@models/lesson";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { timerActions } from "./timer";
 
 export interface PreviousWord {
   word: string;
@@ -19,7 +20,7 @@ export interface PreviousWord {
 
 interface ExerciseStore extends Exercises {
   setLesson(lesson: Lesson): void;
-  nextExercise(skip?: boolean): void;
+  nextExercise(): void;
   getCurrentWords(): string[];
   getUniqueWords(): string[];
   setGeneration(generation: ExerciseGeneration): void;
@@ -27,10 +28,6 @@ interface ExerciseStore extends Exercises {
   previousExercise: PreviousWord[];
   setPreviousExercise(previousExercise: PreviousWord[]): void;
   completed: boolean;
-  elapsedTime: string;
-  startTime?: Date;
-  startTimer: () => void;
-  timerId?: NodeJS.Timeout;
   setTarget(target: Target): void;
 }
 
@@ -42,18 +39,14 @@ const useExerciseStore = create<ExerciseStore>()(
   persist(
     (set, get) => {
       async function resetExercises(extra: Replacements) {
+        timerActions.resetTotal();
         const store = get();
-
-        clearTimeout(store.timerId);
 
         const allExercises = await generateExercise({ ...store, ...extra });
         set({
           allExercises,
           currentExerciseIndex: 0,
           completed: false,
-          elapsedTime: "",
-          startTime: undefined,
-          timerId: undefined,
           ...extra,
         });
       }
@@ -66,6 +59,7 @@ const useExerciseStore = create<ExerciseStore>()(
         allExercises: [],
         currentExerciseIndex: 0,
         nextExercise: () => {
+          timerActions.resetExercise();
           const store = get();
           let nextIndex = store.currentExerciseIndex + 1;
           let completed = store.completed;
@@ -77,9 +71,6 @@ const useExerciseStore = create<ExerciseStore>()(
           set({
             currentExerciseIndex: nextIndex,
             completed,
-            elapsedTime: "",
-            startTime: undefined,
-            timerId: undefined,
           });
         },
         getCurrentWords: () => {
@@ -122,27 +113,6 @@ const useExerciseStore = create<ExerciseStore>()(
         setPreviousExercise: (previousExercise: PreviousWord[]) =>
           set({ previousExercise }),
         completed: false,
-        elapsedTime: "",
-        startTimer: () => {
-          set({ elapsedTime: "0:00", startTime: new Date() });
-
-          function updateTimer() {
-            const { startTime } = get();
-            if (!startTime) {
-              return;
-            }
-
-            let seconds = Math.floor((Date.now() - startTime.getTime()) / 1000);
-            const minutes = Math.floor(seconds / 60);
-            seconds = seconds % 60;
-            const elapsedTime = `${minutes}:${seconds.toString().padStart(2, "0")}`;
-
-            const timerId = setTimeout(updateTimer, 1000);
-            set({ timerId, elapsedTime });
-          }
-
-          updateTimer();
-        },
         target: {
           selected: Targets.Percentage,
           percentage: 95,

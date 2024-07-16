@@ -2,10 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-## [Unreleased]
+## 2024-07-06 - 2024-07-31
 
 ### ➕ Added
 
@@ -26,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add linting checks for the PRs
 
-## 0.2.0 - 2024-07-05
+## 2024-07-05
 
 ### ➕ Added
 
@@ -49,7 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pressing space at the start does no longer clear the current WPM
 - Couldn't create a new lesson as it was treated as a built-in lesson
 
-## 0.1.0 - 2024-07-03
+## 2024-07-03
 
 ### ➕ Added
 

@@ -2,13 +2,13 @@
 
 ## Next Up
 
-- Better caching for lessons and words.
 - Improve skip
-  - Save timer for exercise when reloading the page
+  - Fix timer for exercise when reloading the page
   - Button to manually skip the exercise
   - Pause the time if no input has been made for 5 seconds
   - Show the time left as a bar that decreases/increases
   - Show the time spent on the previous exercise
+  - Show new record for words
 
 ## To Do
 
