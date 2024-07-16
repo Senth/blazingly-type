@@ -30,7 +30,7 @@ export default function TypingPracticePage(): JSX.Element {
 
 function Selectors(): JSX.Element {
   const divRef = useRef<HTMLDivElement>(null);
-  const [columns, setColumns] = useState(4);
+  const [columns, setColumns] = useState("grid-cols-4");
 
   useEffect(() => {
     const div = divRef.current;
@@ -42,9 +42,9 @@ function Selectors(): JSX.Element {
       for (let entry of entries) {
         const { width } = entry.contentRect;
         if (width < 900) {
-          setColumns(2);
+          setColumns("grid-cols-2");
         } else {
-          setColumns(4);
+          setColumns("grid-cols-4");
         }
       }
     });
@@ -52,10 +52,10 @@ function Selectors(): JSX.Element {
     resizeObserver.observe(div);
 
     return () => resizeObserver.unobserve(div);
-  }, [divRef]);
+  }, [divRef, setColumns]);
 
   return (
-    <div ref={divRef} className={`w-full grid grid-cols-${columns} gap-4`}>
+    <div ref={divRef} className={`w-full grid ${columns} gap-4`}>
       <PrioritySelector />
       <LengthSelector />
       <RepetitionSelector />
