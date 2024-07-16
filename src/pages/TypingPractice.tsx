@@ -74,6 +74,7 @@ function PrioritySelector(): JSX.Element {
         {Object.values(OrderTypes).map((order) => (
           <Radio
             name="order"
+            key={order}
             label={order}
             checked={order === generation.order}
             onChecked={() => setGeneration({ ...generation, order: order })}
