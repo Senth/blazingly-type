@@ -55,10 +55,7 @@ function Selectors(): JSX.Element {
   }, [divRef]);
 
   return (
-    <div
-      ref={divRef}
-      className={`w-full grid grid-cols-${columns} justify-center gap-4`}
-    >
+    <div ref={divRef} className={`w-full grid grid-cols-${columns} gap-4`}>
       <PrioritySelector />
       <LengthSelector />
       <RepetitionSelector />
