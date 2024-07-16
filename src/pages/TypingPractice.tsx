@@ -410,9 +410,6 @@ function TypingField(): JSX.Element {
           wordsResponse.data[i].highestWpm,
         );
         if (parseFloat(targetWpm.toFixed(1)) >= parseFloat(wpm.toFixed(1))) {
-          console.log(
-            `Word ${word} didn't meet the target WPM of ${targetWpm.toFixed(1)} with ${wpm.toFixed(1)} WPM`,
-          );
           return;
         }
 

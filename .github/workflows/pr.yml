@@ -15,6 +15,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check for console.log()
+        run: |
+          if grep -R "console.log(" src/; then
+            echo "Error: console.log() found in code"
+            exit 1
+          fi
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -24,6 +31,16 @@ jobs:
         uses: borales/actions-yarn@v5
         with:
           cmd: install
+
+      - name: ESlint
+        uses: borales/actions-yarn@v5
+        with:
+          cmd: lint
+
+      # - name: Check for security vulnerabilities
+      #   uses: borales/actions-yarn@v5
+      #   with:
+      #     cmd: audit --groups dependencies
 
       - name: Export environment variables
         run: |
