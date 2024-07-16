@@ -22,6 +22,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   that the WPM was 0.01 off the target WPM, so it would display as green but was not met.
 - Now saves the progress when automatically skipping the exercise
 
+### 💻 Technical
+
+- Add linting checks for the PRs
+
 ## 0.2.0 - 2024-07-05
 
 ### ➕ Added

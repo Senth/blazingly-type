@@ -17,6 +17,8 @@
   "scripts": {
     "start": "craco start",
     "build": "craco build",
+    "lint": "eslint src",
+    "lint-fix": "eslint src --fix",
     "test": "craco test",
     "eject": "craco eject"
   },
