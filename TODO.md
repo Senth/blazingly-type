@@ -2,8 +2,6 @@
 
 ## Next Up
 
-- Only save the exercises progress locally, not necessary to store in the cloud and costs extra
-  - Fix issue where skipping to next exercise doesn't save the progress
 - Better caching for lessons and words.
 - Improve skip
   - Save timer for exercise when reloading the page

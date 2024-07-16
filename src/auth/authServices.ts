@@ -1,5 +1,5 @@
 import { auth } from "./firebaseInit";
-import { doc, getDoc, setDoc, getFirestore } from "firebase/firestore";
+import { doc, setDoc, getFirestore } from "firebase/firestore";
 import {
   signInWithPopup,
   GoogleAuthProvider,
@@ -7,7 +7,6 @@ import {
   signOut,
 } from "firebase/auth";
 import { userProfileActions } from "@stores/userProfile";
-import { exerciseActions } from "@stores/exercise";
 
 const provider = new GoogleAuthProvider();
 
@@ -42,16 +41,6 @@ auth.onAuthStateChanged(async (user) => {
   localStorage.setItem("user", JSON.stringify(user));
 
   const userRef = doc(getFirestore(), "users", user.uid);
-  const userDoc = await getDoc(userRef);
-
-  // Update the exercise data
-  if (userDoc.exists()) {
-    if (userDoc.data()?.exercisesJSON) {
-      exerciseActions.setFromModel(JSON.parse(userDoc.data().exercisesJSON));
-    }
-
-    return;
-  }
 
   // First time logging in, create the user document
   await setDoc(userRef, {

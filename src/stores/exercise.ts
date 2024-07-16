@@ -19,7 +19,6 @@ export interface PreviousWord {
 
 interface ExerciseStore extends Exercises {
   setLesson(lesson: Lesson): void;
-  setFromModel(exercises: Exercises): void;
   nextExercise(skip?: boolean): void;
   getCurrentWords(): string[];
   getUniqueWords(): string[];
@@ -64,7 +63,6 @@ const useExerciseStore = create<ExerciseStore>()(
         setLesson: async (lesson: Lesson) => {
           resetExercises({ lesson });
         },
-        setFromModel: (exercises: Exercises) => set({ ...exercises }),
         allExercises: [],
         currentExerciseIndex: 0,
         nextExercise: () => {
@@ -270,7 +268,3 @@ function filterByMaxExercises(
 
   return words;
 }
-
-export const exerciseActions = {
-  setFromModel: useExerciseStore.getState().setFromModel,
-};

@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🔄 Changed
 
 - Improve calculation of WPM when words that begin or end with spaces are in the exercise
+- Save exercise progress locally instead of in the cloud
 
 ### 🐛 Fixed
 
