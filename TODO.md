@@ -12,6 +12,7 @@
 
 ## To Do
 
+- Migrate to using Vite instead of CRA and Craco
 - Word page: Show all the practiced words and their WPM
 - Save word history for successful exercises
 - Create smart practice session of a lesson

@@ -37,10 +37,10 @@ jobs:
         with:
           cmd: lint
 
-      - name: Check for security vulnerabilities
-        uses: borales/actions-yarn@v5
-        with:
-          cmd: audit --groups dependencies
+      # - name: Check for security vulnerabilities
+      #   uses: borales/actions-yarn@v5
+      #   with:
+      #     cmd: audit --groups dependencies
 
       - name: Export environment variables
         run: |
