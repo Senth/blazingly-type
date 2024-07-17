@@ -16,6 +16,12 @@ export interface PreviousWord {
   word: string;
   wpm: string;
   targetWpm: string;
+  isHighscore: boolean;
+}
+
+export interface PreviousExercise {
+  words: PreviousWord[];
+  elapsedTime: string;
 }
 
 interface ExerciseStore extends Exercises {
@@ -25,8 +31,8 @@ interface ExerciseStore extends Exercises {
   getUniqueWords(): string[];
   setGeneration(generation: ExerciseGeneration): void;
   setMaxTime(maxTime: MaxTime): void;
-  previousExercise: PreviousWord[];
-  setPreviousExercise(previousExercise: PreviousWord[]): void;
+  previousExercise: PreviousExercise;
+  setPreviousExercise(previousExercise: PreviousExercise): void;
   completed: boolean;
   setTarget(target: Target): void;
 }
@@ -106,11 +112,12 @@ const useExerciseStore = create<ExerciseStore>()(
           minutes: 15,
           enabled: false,
         },
-        setMaxTime: (maxTime: MaxTime) => {
-          set({ maxTime });
+        setMaxTime: (maxTime: MaxTime) => set({ maxTime }),
+        previousExercise: {
+          words: [],
+          elapsedTime: "",
         },
-        previousExercise: [],
-        setPreviousExercise: (previousExercise: PreviousWord[]) =>
+        setPreviousExercise: (previousExercise: PreviousExercise) =>
           set({ previousExercise }),
         completed: false,
         target: {

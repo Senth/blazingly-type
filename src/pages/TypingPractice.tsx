@@ -1,7 +1,10 @@
 import Radio from "@components/basic/radio";
 import { useWords } from "@db/word";
 import { Word } from "@models/word";
-import useExerciseStore, { PreviousWord } from "@stores/exercise";
+import useExerciseStore, {
+  PreviousExercise,
+  PreviousWord,
+} from "@stores/exercise";
 import useWpmCounterStore from "@stores/wpmCounter";
 import useSettingsStore from "@stores/settings";
 import React, { useEffect, useRef, useState } from "react";
@@ -413,18 +416,23 @@ function TypingField(): JSX.Element {
       }
 
       // Save the previous exercise
-      const previousExercise: PreviousWord[] = [];
+      const previousWords: PreviousWord[] = [];
 
       // Update and save the words to DB
       const words = wordsResponse.data;
       for (let i = 0; i < currentWords.length; i++) {
-        previousExercise.push({
+        previousWords.push({
           word: currentWords[i],
           wpm: wordWpms[i].toFixed(1),
           targetWpm: calculateTargetWpm(target, words[i].highestWpm).toFixed(1),
+          isHighscore: wordWpms[i] > words[i].highestWpm,
         });
         words[i] = Word.updateWpm(words[i], wordWpms[i]);
       }
+      const previousExercise: PreviousExercise = {
+        words: previousWords,
+        elapsedTime: timer.getElapsedTime(),
+      };
 
       nextExercise();
       setPreviousExercise(previousExercise);
@@ -526,15 +534,23 @@ function WPMDisplay(): JSX.Element {
               }
             }
 
-            let previous: PreviousWord = { word: "", wpm: "", targetWpm: "" };
-            if (index < previousExercise.length) {
-              previous = previousExercise[index];
+            let previous: PreviousWord = {
+              word: "",
+              wpm: "",
+              targetWpm: "",
+              isHighscore: false,
+            };
+            if (index < previousExercise.words.length) {
+              previous = previousExercise.words[index];
             }
 
             return (
               <tr key={word}>
                 <td className="text-gray-400">{previous.word}</td>
-                <td className="text-gray-400">{previous.wpm}</td>
+                <td className="text-gray-400">
+                  {previous.wpm}
+                  {previous.isHighscore && " ✨"}
+                </td>
                 <td className="text-gray-400">{previous.targetWpm}</td>
                 <td>{word}</td>
                 <td className={classColor} style={{ color: styleColor }}>

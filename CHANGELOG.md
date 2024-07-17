@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### ➕ Added
 
 - Target WPM can now be set to either percentage or relative to the highest WPM (used to be 100%)
+- Time spent on current exercise now automatically pauses after 5 seconds of inactivity
 
 ### 🔄 Changed
 
