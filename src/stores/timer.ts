@@ -21,7 +21,9 @@ const useTimerStore = create<TimerStore>()(
         let { elapsedSeconds, lastKeystrokeTime, lastUpdate, isRunning } =
           get();
         const now = new Date();
-        const lastUpdateTime = lastUpdate ? lastUpdate.getTime() : 0;
+        const lastUpdateTime = lastUpdate
+          ? lastUpdate.getTime()
+          : now.getTime();
         const elapsed = Math.round((now.getTime() - lastUpdateTime) / 1000);
 
         // Still actively typing
