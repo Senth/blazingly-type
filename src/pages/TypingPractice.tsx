@@ -479,8 +479,11 @@ function WPMDisplay(): JSX.Element {
       <table className="text-2xl text-left mt-16 w-full m-auto table-fixed">
         <thead>
           <tr className="text-3xl font-normal">
-            <th className="text-gray-400 pb-4" colSpan={3}>
+            <th className="text-gray-400 pb-4" colSpan={2}>
               Previous
+            </th>
+            <th className="text-gray-400 pb-4 text-2xl">
+              {previousExercise.elapsedTime}
             </th>
             <th className="pb-4" colSpan={2}>
               Current
