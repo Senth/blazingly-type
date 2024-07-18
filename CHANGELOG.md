@@ -20,6 +20,7 @@ All notable changes to this project will be documented in this file.
 - Word WPM now only uses the first decimal when checking if reached target WPM. Previously there was a chance
   that the WPM was 0.01 off the target WPM, so it would display as green but was not met.
 - Now saves the progress when automatically skipping the exercise
+- All previous words are now shown even when reducing the word count in repetition
 
 ### 💻 Technical
 

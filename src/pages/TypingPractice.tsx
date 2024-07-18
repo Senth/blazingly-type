@@ -14,27 +14,14 @@ import Checkbox from "@components/basic/checkbox";
 import { OrderTypes, Target, Targets } from "@models/exercise";
 import useTimerStore from "@stores/timer";
 
-export default function TypingPracticePage(): JSX.Element {
-  return (
-    <div className="h-full w-full flex flex-col">
-      <TopBar menu={<LessonMenuClosed />} />
-      <div className="h-full w-full flex">
-        <LessonMenu />
-        <div className="grow"></div>
-        <div className="h-full min-w-[400px] max-w-[968px] flex flex-col flex-grow p-5">
-          <Selectors />
-          <ExerciseWrapper />
-          <WPMDisplay />
-        </div>
-        <div className="grow"></div>
-      </div>
-    </div>
-  );
+enum Sizes {
+  medium = 900,
+  large = 99999,
 }
 
-function Selectors(): JSX.Element {
+export default function TypingPracticePage(): JSX.Element {
   const divRef = useRef<HTMLDivElement>(null);
-  const [columns, setColumns] = useState("grid-cols-4");
+  const [size, setSize] = useState<Sizes>(Sizes.large);
 
   useEffect(() => {
     const div = divRef.current;
@@ -45,10 +32,10 @@ function Selectors(): JSX.Element {
     const resizeObserver = new ResizeObserver((entries) => {
       for (let entry of entries) {
         const { width } = entry.contentRect;
-        if (width < 900) {
-          setColumns("grid-cols-2");
+        if (width < Sizes.medium) {
+          setSize(Sizes.medium);
         } else {
-          setColumns("grid-cols-4");
+          setSize(Sizes.large);
         }
       }
     });
@@ -56,10 +43,40 @@ function Selectors(): JSX.Element {
     resizeObserver.observe(div);
 
     return () => resizeObserver.unobserve(div);
-  }, [divRef, setColumns]);
+  }, [divRef]);
 
   return (
-    <div ref={divRef} className={`w-full grid ${columns} gap-4`}>
+    <div className="h-full w-full flex flex-col">
+      <TopBar menu={<LessonMenuClosed />} />
+      <div className="h-full w-full flex">
+        <LessonMenu />
+        <div className="grow"></div>
+        <div
+          ref={divRef}
+          className="h-full min-w-[400px] max-w-[968px] flex flex-col flex-grow p-5"
+        >
+          <Selectors size={size} />
+          <ExerciseWrapper />
+          <WPMDisplay />
+        </div>
+        <div className="grow"></div>
+      </div>
+    </div>
+  );
+}
+
+function Selectors({ size }: { size: Sizes }): JSX.Element {
+  let columns = "grid-cols-4";
+  switch (size) {
+    case Sizes.medium:
+      columns = "grid-cols-2";
+      break;
+    default:
+      columns = "grid-cols-4";
+  }
+
+  return (
+    <div className={`w-full grid ${columns} gap-4`}>
       <PrioritySelector />
       <LengthSelector />
       <RepetitionSelector />
@@ -420,7 +437,7 @@ function TypingField(): JSX.Element {
 
       // Update and save the words to DB
       const words = wordsResponse.data;
-      for (let i = 0; i < currentWords.length; i++) {
+      for (let i = 0; i < uniqueWords.length; i++) {
         previousWords.push({
           word: currentWords[i],
           wpm: wordWpms[i].toFixed(1),
@@ -474,6 +491,70 @@ function WPMDisplay(): JSX.Element {
   const wordsResponse = useWords(uniqueWords);
   const timer = useTimerStore();
 
+  // Create the rows for the table
+  interface Column {
+    text: string;
+    className?: string;
+    style?: string;
+  }
+
+  const maxRows = Math.max(previousExercise.words.length, uniqueWords.length);
+  const rows: Column[][] = Array.from({ length: maxRows }, () =>
+    Array.from({ length: 6 }, () => ({ text: "" })),
+  );
+
+  // Previous words
+  for (let i = 0; i < previousExercise.words.length; i++) {
+    const word = previousExercise.words[i];
+    rows[i][0] = { text: word.word, className: "text-gray-400" };
+    rows[i][1] = { text: word.wpm, className: "text-gray-400" };
+    rows[i][2] = { text: word.targetWpm, className: "text-gray-400" };
+  }
+
+  // Current
+  for (let i = 0; i < uniqueWords.length; i++) {
+    const word = uniqueWords[i];
+    const wordColumn: Column = { text: word };
+    const wpmColumn: Column = { text: "" };
+    const targetColumn: Column = { text: "0.0" };
+
+    if (
+      !wordsResponse?.isLoading &&
+      wordsResponse?.data?.length === uniqueWords.length
+    ) {
+      targetColumn.text = calculateTargetWpm(
+        target,
+        wordsResponse.data[i].highestWpm,
+      ).toFixed(1);
+    }
+
+    // Calculate color based on how far from the target WPM the user is
+    // 0 WPM = white
+    // Above target = green
+    // 0-20 WPM below target = gradient from yellow to red
+    // Below 20 WPM = red
+    const wpm = wpmCounter.getWordWpm(word);
+    wpmColumn.text = wpm.toFixed(1);
+    if (wpm === 0) {
+      wpmColumn.className = "text-white";
+    } else if (wpm >= parseFloat(targetColumn.text)) {
+      wpmColumn.className = "text-green-500";
+    } else {
+      const diff = parseFloat(targetColumn.text) - wpm;
+      if (diff <= 30) {
+        const red = 255;
+        const green = (255 - (diff / 30) * 255).toFixed(0);
+        wpmColumn.style = `rgb(${red},${green},0)`;
+      } else {
+        wpmColumn.className = "text-red-500";
+      }
+    }
+
+    rows[i][3] = wordColumn;
+    rows[i][4] = wpmColumn;
+    rows[i][5] = targetColumn;
+  }
+
   return (
     <>
       <table className="text-2xl text-left mt-16 w-full m-auto table-fixed">
@@ -502,67 +583,19 @@ function WPMDisplay(): JSX.Element {
           </tr>
         </thead>
         <tbody>
-          {uniqueWords.map((word, index) => {
-            let targetWpm: string = "0";
-            if (
-              !wordsResponse?.isLoading &&
-              wordsResponse?.data?.length === uniqueWords.length
-            ) {
-              targetWpm = calculateTargetWpm(
-                target,
-                wordsResponse.data[index].highestWpm,
-              ).toFixed(1);
-            }
-
-            // Calculate color based on how far from the target WPM the user is
-            // 0 WPM = white
-            // Above target = green
-            // 0-20 WPM below target = gradient from yellow to red
-            // Below 20 WPM = red
-            let classColor = "";
-            let styleColor = "";
-            const wpm = wpmCounter.getWordWpm(word);
-            if (wpm === 0) {
-              classColor = "text-white";
-            } else if (wpm >= parseFloat(targetWpm)) {
-              classColor = "text-green-500";
-            } else {
-              const diff = parseFloat(targetWpm) - wpm;
-              if (diff <= 30) {
-                const red = 255;
-                const green = (255 - (diff / 30) * 255).toFixed(0);
-                styleColor = `rgb(${red},${green},0)`;
-              } else {
-                classColor = "text-red-500";
-              }
-            }
-
-            let previous: PreviousWord = {
-              word: "",
-              wpm: "",
-              targetWpm: "",
-              isHighscore: false,
-            };
-            if (index < previousExercise.words.length) {
-              previous = previousExercise.words[index];
-            }
-
-            return (
-              <tr key={word}>
-                <td className="text-gray-400">{previous.word}</td>
-                <td className="text-gray-400">
-                  {previous.wpm}
-                  {previous.isHighscore && " ✨"}
+          {rows.map((row, i) => (
+            <tr key={i}>
+              {row.map((column, j) => (
+                <td
+                  key={j}
+                  className={`text-2xl ${column.className}`}
+                  style={{ color: column.style }}
+                >
+                  {column.text}
                 </td>
-                <td className="text-gray-400">{previous.targetWpm}</td>
-                <td>{word}</td>
-                <td className={classColor} style={{ color: styleColor }}>
-                  {wpm.toFixed(1)}
-                </td>
-                <td>{targetWpm}</td>
-              </tr>
-            );
-          })}
+              ))}
+            </tr>
+          ))}
         </tbody>
       </table>
       <div className="flex-grow"></div>

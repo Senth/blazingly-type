@@ -3,6 +3,8 @@
 ## Next Up
 
 - Improve skip
+  - Don't show same previous words several times
+  - Show all the previous words even when current is lower
   - Button to manually skip the exercise
   - Show the time left as a bar that decreases/increases
   - Show the time spent on the previous exercise
