@@ -396,7 +396,8 @@ function TypingField(): JSX.Element {
     }
 
     // Update WPM counter
-    if (value.length > input.length) {
+    const isWrong = correctInput.substring(0, value.length) !== value;
+    if (!isWrong && value.length > input.length) {
       wpmCounter.updateCharTime(value.length - 1);
     }
 
@@ -411,6 +412,7 @@ function TypingField(): JSX.Element {
         return;
       }
 
+      // Not the full exercise, don't run completion
       if (wordsResponse?.data?.length !== currentWords.length) {
         return;
       }
@@ -506,8 +508,9 @@ function WPMDisplay(): JSX.Element {
   // Previous words
   for (let i = 0; i < previousExercise.words.length; i++) {
     const word = previousExercise.words[i];
+    const wpm = word.isHighscore ? `${word.wpm} 🏆` : word.wpm;
     rows[i][0] = { text: word.word, className: "text-gray-400" };
-    rows[i][1] = { text: word.wpm, className: "text-gray-400" };
+    rows[i][1] = { text: wpm, className: "text-gray-400" };
     rows[i][2] = { text: word.targetWpm, className: "text-gray-400" };
   }
 
@@ -599,8 +602,10 @@ function WPMDisplay(): JSX.Element {
         </tbody>
       </table>
       <div className="flex-grow"></div>
-      <div className="mb-10 text-4xl text-center">
-        {wpmCounter.getWpm().toFixed(0)} WPM
+      <div className="mb-10 text-4xl w-full flex gap-4 justify-center text-gray-400">
+        <span>{wpmCounter.getWpm().toFixed(0)} WPM</span>
+        <span> | </span>
+        <span>{timer.getTotalElapsedTime()}</span>
       </div>
     </>
   );

@@ -18,8 +18,13 @@ const useTimerStore = create<TimerStore>()(
   persist(
     (set, get) => {
       function updateElapsedSeconds() {
-        let { elapsedSeconds, lastKeystrokeTime, lastUpdate, isRunning } =
-          get();
+        let {
+          elapsedSeconds,
+          elapsedTotalSeconds,
+          lastKeystrokeTime,
+          lastUpdate,
+          isRunning,
+        } = get();
         const now = new Date();
         const lastUpdateTime = lastUpdate
           ? lastUpdate.getTime()
@@ -38,7 +43,7 @@ const useTimerStore = create<TimerStore>()(
 
         set({
           elapsedSeconds: elapsedSeconds + elapsed,
-          elapsedTotalSeconds: elapsedSeconds + elapsed,
+          elapsedTotalSeconds: elapsedTotalSeconds + elapsed,
           lastUpdate: now,
           isRunning,
         });

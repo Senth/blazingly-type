@@ -8,12 +8,14 @@ All notable changes to this project will be documented in this file.
 
 - Target WPM can now be set to either percentage or relative to the highest WPM (used to be 100%)
 - Time spent on current exercise now automatically pauses after 5 seconds of inactivity
-- ✨ is now added after previous WPM when a new high score has been reached
+- 🏆 is now added after previous WPM when a new high score has been reached
+- Total time spent on the lesson is now shown at the bottom of the page
 
 ### 🔄 Changed
 
 - Improve calculation of WPM when words that begin or end with spaces are in the exercise
 - Save exercise progress locally instead of in the cloud
+- WPM does not update when the input is invalid
 
 ### 🐛 Fixed
 
