@@ -2,31 +2,34 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-## [Unreleased]
+## 2024-07-06 - 2024-07-31
 
 ### ➕ Added
 
 - Target WPM can now be set to either percentage or relative to the highest WPM (used to be 100%)
+- Time spent on current exercise now automatically pauses after 5 seconds of inactivity
+- 🏆 is now added after previous WPM when a new high score has been reached
+- Total time spent on the lesson is now shown at the bottom of the page
 
 ### 🔄 Changed
 
 - Improve calculation of WPM when words that begin or end with spaces are in the exercise
 - Save exercise progress locally instead of in the cloud
+- WPM does not update when the input is invalid
 
 ### 🐛 Fixed
 
 - Word WPM now only uses the first decimal when checking if reached target WPM. Previously there was a chance
   that the WPM was 0.01 off the target WPM, so it would display as green but was not met.
 - Now saves the progress when automatically skipping the exercise
+- All previous words are now shown even when reducing the word count in repetition
+- When failing, previous words were not updated
 
 ### 💻 Technical
 
 - Add linting checks for the PRs
 
-## 0.2.0 - 2024-07-05
+## 2024-07-05
 
 ### ➕ Added
 
@@ -49,7 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pressing space at the start does no longer clear the current WPM
 - Couldn't create a new lesson as it was treated as a built-in lesson
 
-## 0.1.0 - 2024-07-03
+## 2024-07-03
 
 ### ➕ Added
 
