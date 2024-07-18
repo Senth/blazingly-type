@@ -23,6 +23,7 @@ All notable changes to this project will be documented in this file.
   that the WPM was 0.01 off the target WPM, so it would display as green but was not met.
 - Now saves the progress when automatically skipping the exercise
 - All previous words are now shown even when reducing the word count in repetition
+- When failing, previous words were not updated
 
 ### 💻 Technical
 

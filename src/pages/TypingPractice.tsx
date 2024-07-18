@@ -366,8 +366,32 @@ function TypingField(): JSX.Element {
   const correctInput = useCorrectInput();
   const timeout = useSettingsStore((state) => state.settings.exercises.timeout);
   const timer = useTimerStore();
+  const targetWpms = wordsResponse.data
+    ? wordsResponse.data.map((word) =>
+        calculateTargetWpm(target, word.highestWpm).toFixed(1),
+      )
+    : Array.from({ length: uniqueWords.length }, () => "0.0");
 
-  if (timeout < timer.getElapsedTime()) {
+  interface BestAttempt {
+    totalDiff: number;
+    bestAttempt: string[];
+  }
+  const [bestAttempt, setBestAttempt] = useState<BestAttempt>({
+    totalDiff: Number.MAX_SAFE_INTEGER,
+    bestAttempt: Array.from({ length: uniqueWords.length }, () => ""),
+  });
+
+  if (timeout <= timer.getElapsedTime()) {
+    setPreviousExercise({
+      metTarget: false,
+      elapsedTime: timer.getElapsedTime(),
+      words: uniqueWords.map((word, i) => ({
+        word: word,
+        wpm: bestAttempt.bestAttempt[i],
+        targetWpm: targetWpms[i],
+        isHighscore: false,
+      })),
+    });
     nextExercise();
     setInput("");
     setHadError(false);
@@ -412,26 +436,45 @@ function TypingField(): JSX.Element {
         return;
       }
 
-      // Not the full exercise, don't run completion
+      // Not the full exercise
       if (wordsResponse?.data?.length !== currentWords.length) {
         return;
       }
 
       // Check if the target WPM for each word was met
       const wordWpms: number[] = [];
-      for (let i = 0; i < currentWords.length; i++) {
+      const diffWpms: number[] = [];
+      let metTarget = true;
+      for (let i = 0; i < uniqueWords.length; i++) {
         const word = currentWords[i];
         const wpm = wpmCounter.getWordWpm(word);
 
-        const targetWpm = calculateTargetWpm(
-          target,
-          wordsResponse.data[i].highestWpm,
-        );
-        if (parseFloat(targetWpm.toFixed(1)) >= parseFloat(wpm.toFixed(1))) {
-          return;
+        const diffWpm = parseFloat(targetWpms[i]) - parseFloat(wpm.toFixed(1));
+        if (diffWpm > 0) {
+          metTarget = false;
         }
 
         wordWpms.push(wpm);
+        diffWpms.push(diffWpm);
+      }
+
+      // Save the best attempt
+      if (!metTarget) {
+        let totalDiff = 0;
+        diffWpms.forEach((diff) => {
+          if (diff > 0) {
+            totalDiff += diff;
+          }
+        });
+
+        if (totalDiff < bestAttempt.totalDiff) {
+          setBestAttempt({
+            totalDiff,
+            bestAttempt: wordWpms.map((wpm) => wpm.toFixed(1)),
+          });
+        }
+
+        return;
       }
 
       // Save the previous exercise
@@ -443,7 +486,7 @@ function TypingField(): JSX.Element {
         previousWords.push({
           word: currentWords[i],
           wpm: wordWpms[i].toFixed(1),
-          targetWpm: calculateTargetWpm(target, words[i].highestWpm).toFixed(1),
+          targetWpm: targetWpms[i],
           isHighscore: wordWpms[i] > words[i].highestWpm,
         });
         words[i] = Word.updateWpm(words[i], wordWpms[i]);
@@ -451,6 +494,7 @@ function TypingField(): JSX.Element {
       const previousExercise: PreviousExercise = {
         words: previousWords,
         elapsedTime: timer.getElapsedTime(),
+        metTarget: true,
       };
 
       nextExercise();

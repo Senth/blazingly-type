@@ -22,6 +22,7 @@ export interface PreviousWord {
 export interface PreviousExercise {
   words: PreviousWord[];
   elapsedTime: string;
+  metTarget: boolean;
 }
 
 interface ExerciseStore extends Exercises {
@@ -116,6 +117,7 @@ const useExerciseStore = create<ExerciseStore>()(
         previousExercise: {
           words: [],
           elapsedTime: "",
+          metTarget: false,
         },
         setPreviousExercise: (previousExercise: PreviousExercise) =>
           set({ previousExercise }),
