@@ -83,7 +83,11 @@ export function useWords(words: string[]) {
     swrResponse.mutate(words);
     words.forEach((word) => {
       if (uid) {
-        saveWord(uid, word);
+        saveWord(uid, word).catch((error) => {
+          console.error("Error saving word:", error);
+        });
+      } else {
+        console.error("User not logged in. Word not saved.");
       }
     });
   }

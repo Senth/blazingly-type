@@ -7,6 +7,8 @@
   - Slowest word decrease per day
   - Advanced settings
   - Multiple keyboard layouts
+- Discard does not discard the changes to the lesson
+- Improve caching of lessons and words
 - Select keyboard layout for lesson
 - Tooltip component
 - Tooltips for selectors
