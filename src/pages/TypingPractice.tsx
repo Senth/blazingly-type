@@ -362,7 +362,7 @@ function TypingField(): JSX.Element {
   const wpmCounter = useWpmCounterStore();
   const currentWords = getCurrentWords() || [];
   const uniqueWords = getUniqueWords();
-  const wordsResponse = useWords(currentWords);
+  const wordsResponse = useWords(uniqueWords);
   const correctInput = useCorrectInput();
   const timeout = useSettingsStore((state) => state.settings.exercises.timeout);
   const timer = useTimerStore();
@@ -437,7 +437,7 @@ function TypingField(): JSX.Element {
       }
 
       // Not the full exercise
-      if (wordsResponse?.data?.length !== currentWords.length) {
+      if (wordsResponse?.data?.length !== uniqueWords.length) {
         return;
       }
 

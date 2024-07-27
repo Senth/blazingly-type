@@ -24,6 +24,7 @@ All notable changes to this project will be documented in this file.
 - Now saves the progress when automatically skipping the exercise
 - All previous words are now shown even when reducing the word count in repetition
 - When failing, previous words were not updated
+- Updating word WPM in the cloud now works correctly
 
 ### 💻 Technical
 
