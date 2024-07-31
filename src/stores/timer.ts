@@ -4,15 +4,16 @@ import { persist } from "zustand/middleware";
 export interface TimerStore {
   elapsedSeconds: number;
   elapsedTotalSeconds: number;
-  lastKeystrokeTime?: Date;
-  lastUpdate?: Date;
-  isRunning: boolean;
+  lastKeystrokeTime?: number;
+  lastUpdateTime?: number;
   keyPressed(): void;
   resetExercise(): void;
   resetTotal(): void;
   getElapsedTime(): string;
   getTotalElapsedTime(): string;
 }
+
+const pauseAfter = 5000;
 
 const useTimerStore = create<TimerStore>()(
   persist(
@@ -22,50 +23,40 @@ const useTimerStore = create<TimerStore>()(
           elapsedSeconds,
           elapsedTotalSeconds,
           lastKeystrokeTime,
-          lastUpdate,
-          isRunning,
+          lastUpdateTime,
         } = get();
-        const now = new Date();
-        const lastUpdateTime = lastUpdate
-          ? lastUpdate.getTime()
-          : now.getTime();
-        const elapsed = Math.round((now.getTime() - lastUpdateTime) / 1000);
+        const now = Date.now();
+        const elapsed = Math.round((now - (lastUpdateTime || now)) / 1000);
 
         // Still actively typing
-        if (
-          lastKeystrokeTime &&
-          lastKeystrokeTime.getTime() >= now.getTime() - 5000
-        ) {
+        if (lastKeystrokeTime && lastKeystrokeTime >= now - pauseAfter) {
           setTimeout(updateElapsedSeconds, 1000);
-        } else {
-          isRunning = false;
         }
 
         set({
           elapsedSeconds: elapsedSeconds + elapsed,
           elapsedTotalSeconds: elapsedTotalSeconds + elapsed,
-          lastUpdate: now,
-          isRunning,
+          lastUpdateTime: now,
         });
       }
 
       return {
         elapsedSeconds: 0,
         elapsedTotalSeconds: 0,
-        isRunning: false,
         keyPressed(): void {
-          const { isRunning } = get();
-          if (!isRunning) {
+          const { lastKeystrokeTime } = get();
+          const now = Date.now();
+
+          const diffSinceLastKeyStroke = now - (lastKeystrokeTime || 0);
+          if (diffSinceLastKeyStroke > pauseAfter) {
             setTimeout(updateElapsedSeconds, 1000);
             set({
-              lastKeystrokeTime: new Date(),
-              lastUpdate: new Date(),
-              isRunning: true,
+              lastKeystrokeTime: now,
+              lastUpdateTime: now,
             });
           } else {
             set({
-              lastKeystrokeTime: new Date(),
-              isRunning: true,
+              lastKeystrokeTime: now,
             });
           }
         },
@@ -73,8 +64,7 @@ const useTimerStore = create<TimerStore>()(
           set({
             elapsedSeconds: 0,
             lastKeystrokeTime: undefined,
-            lastUpdate: undefined,
-            isRunning: false,
+            lastUpdateTime: undefined,
           });
         },
         resetTotal(): void {
@@ -82,8 +72,7 @@ const useTimerStore = create<TimerStore>()(
             elapsedSeconds: 0,
             elapsedTotalSeconds: 0,
             lastKeystrokeTime: undefined,
-            lastUpdate: undefined,
-            isRunning: false,
+            lastUpdateTime: undefined,
           });
         },
         getElapsedTime(): string {
