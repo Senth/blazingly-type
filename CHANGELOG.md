@@ -25,6 +25,7 @@ All notable changes to this project will be documented in this file.
 - All previous words are now shown even when reducing the word count in repetition
 - When failing, previous words were not updated
 - Updating word WPM in the cloud now works correctly
+- Reloading page now longer breakes the time counter
 
 ### 💻 Technical
 
