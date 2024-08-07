@@ -17,3 +17,7 @@ const useSettingsStore = create<SettingsStore>((set) => ({
 }));
 
 export default useSettingsStore;
+
+export const settingsActions = {
+  settings: useSettingsStore.getState().settings,
+};
