@@ -4,6 +4,7 @@ export interface Settings {
 
 export interface SettingsExercise {
   autoSkipTime: string;
+  wpmDecayPerDay: number;
 }
 
 export interface SingleSetting<T> {
@@ -16,6 +17,7 @@ export namespace Settings {
     return {
       exercise: {
         autoSkipTime: "3:00",
+        wpmDecayPerDay: 2.5,
       },
     };
   }

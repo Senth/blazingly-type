@@ -3,10 +3,11 @@
 ## Next Up
 
 - Settings page
-  - Exercise skip time
-  - Slowest word decrease per day
+  - Save settings in the cloud
+  - Cache the settings locally
   - Advanced settings
   - Multiple keyboard layouts
+  - Go back to Practice page
 - Discard does not discard the changes to the lesson
 - Improve caching of lessons and words
 - Select keyboard layout for lesson

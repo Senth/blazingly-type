@@ -2,12 +2,23 @@ import { useRef, useState } from "react";
 
 interface InputProps extends React.HTMLProps<HTMLInputElement> {
   label?: string;
-  onCommit?: (value: string | number | readonly string[]) => void;
+  onCommit?: (value: ValueType) => void;
+  validate?: (value: ValueType) => Validation;
+  updateValidationMessage?: (value: ValueType) => void;
+}
+
+export type ValueType = string | number | readonly string[];
+
+export interface Validation {
+  isValid: boolean;
+  message: string;
+  value?: ValueType;
 }
 
 export default function Input(props: InputProps): JSX.Element {
   const [value, setValue] = useState(props.value);
   const [tempValue, setTempValue] = useState(props.value);
+  const [isValid, setIsValid] = useState(true);
   const leaveState = useRef("");
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
@@ -31,15 +42,29 @@ export default function Input(props: InputProps): JSX.Element {
   }
 
   function handleBlur() {
-    console.log("blurred");
     if (
       props.onCommit &&
       leaveState.current !== "Escape" &&
       tempValue !== undefined &&
       tempValue !== value
     ) {
-      console.log("blurred and committed ", tempValue);
-      props.onCommit(tempValue);
+      let isValid = true;
+      let committedValue = tempValue;
+      if (props.validate) {
+        const validation = props.validate(tempValue);
+        isValid = validation.isValid;
+        setIsValid(isValid);
+        if (props.updateValidationMessage) {
+          props.updateValidationMessage(validation.message);
+        }
+        if (validation.value) {
+          committedValue = validation.value;
+          setTempValue(committedValue);
+        }
+      }
+      if (isValid) {
+        props.onCommit(committedValue);
+      }
     }
     setValue(tempValue);
   }
@@ -51,13 +76,15 @@ export default function Input(props: InputProps): JSX.Element {
   const inputProps = { ...props };
   delete inputProps.onCommit;
   delete inputProps.label;
+  delete inputProps.validate;
+  delete inputProps.updateValidationMessage;
 
   return (
     <div className={`flex flex-col ${props.className}`}>
       {props.label && <label className="mb-1">{props.label}</label>}
       <input
         {...inputProps}
-        className={`p-2 rounded-md border w-full text-black ${props.disabled ? "bg-gray-400 border-gray-600" : "border-gray-300"}`}
+        className={`p-2 rounded-md border w-full text-black ${props.disabled ? "bg-gray-400 border-gray-600" : "border-gray-300"} ${!isValid && "border-red-700 border-1"}`}
         value={tempValue}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
