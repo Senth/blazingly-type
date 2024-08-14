@@ -2,6 +2,10 @@
 
 ## Next Up
 
+- Generic Middleware to save store in DB and local storage
+  - Read from local storage when initializing the store
+  - Save to Firestore
+  - Read from Firestore when cache is empty or older than expiry time
 - Settings page
   - Save settings in the cloud
   - Cache the settings locally
