@@ -21,4 +21,6 @@ export namespace Settings {
       },
     };
   }
+
+  export const version = 0;
 }

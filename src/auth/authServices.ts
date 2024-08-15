@@ -48,10 +48,10 @@ auth.onAuthStateChanged(async (user) => {
   });
 });
 
-export function getUserId(): string | null {
+export function getUserId(): string | undefined {
   const user = localStorage.getItem("user");
   if (!user) {
-    return null;
+    return undefined;
   }
 
   return JSON.parse(user).uid;

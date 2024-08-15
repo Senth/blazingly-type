@@ -1,6 +1,7 @@
 import { Settings, SettingsExercise } from "@models/settings";
 import { create } from "zustand";
-import { dbCacheMiddleware } from "./dbCacheMiddleware";
+import { persistDBAndCache } from "./dbCacheMiddleware";
+import { getUserId } from "@auth";
 
 interface SettingsStore {
   settings: Settings;
@@ -8,8 +9,8 @@ interface SettingsStore {
   setExercise: (exerciseSettings: SettingsExercise) => void;
 }
 
-const useSettingsStore = create<SettingsStore>(
-  dbCacheMiddleware(
+const useSettingsStore = create<SettingsStore>()(
+  persistDBAndCache(
     (set) => ({
       settings: Settings.New(),
       setSettings: (settings: Settings) => set({ settings }),
@@ -20,6 +21,8 @@ const useSettingsStore = create<SettingsStore>(
     }),
     {
       name: "settings",
+      version: Settings.version,
+      userId: getUserId(),
     },
   ),
 );
