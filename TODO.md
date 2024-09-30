@@ -3,8 +3,10 @@
 ## Next Up
 
 - Generic Middleware to save store in DB and local storage
-  - Save to Firestore
-  - Read from Firestore when cache is empty or older than expiry time
+  - Delete existing settings data from DB
+  - Test if save and load works correctly
+    - Change the local storage and reload.
+    - Expire the local storage and it should load differently now.
 - Settings page
   - Save settings in the cloud
   - Cache the settings locally

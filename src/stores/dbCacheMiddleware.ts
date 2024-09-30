@@ -28,6 +28,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import {
+  doc,
+  DocumentData,
+  DocumentReference,
+  getFirestore,
+  setDoc,
+  getDoc,
+} from "firebase/firestore";
 import { StateCreator, StoreApi, StoreMutatorIdentifier } from "zustand";
 
 export interface StateStorage {
@@ -39,6 +47,7 @@ export interface StateStorage {
 export type StorageValue<S> = {
   state: S;
   version?: number;
+  cacheExpiry?: number;
 };
 
 export interface PersistStorage<S> {
@@ -214,6 +223,7 @@ const newImpl: PersistImpl = (config, baseOptions) => (set, get, api) => {
   let options = {
     storage: createJSONStorage<S>(() => localStorage),
     partialize: (state: S) => state,
+    cacheExpiry: 0,
     version: 0,
     merge: (persistedState: unknown, currentState: S) => ({
       ...currentState,
@@ -240,16 +250,71 @@ const newImpl: PersistImpl = (config, baseOptions) => (set, get, api) => {
     );
   }
 
+  const calculateCacheExpiryTime = (): number => {
+    const expiryInMinutes = options.cacheExpiryInMinutes ?? 30;
+    return new Date().getTime() + expiryInMinutes * 60000;
+  };
+
   const setItem = () => {
     const state = options.partialize({ ...get() });
 
-    // TODO Save to Firestore
+    // Save to Firestore
     if (options.userId) {
+      setDoc(docRef(), removeFunctionsFromState(state));
     }
 
     return (storage as PersistStorage<S>).setItem(options.name, {
       state,
       version: options.version,
+      cacheExpiry: calculateCacheExpiryTime(),
+    });
+  };
+
+  const removeFunctionsFromState = (state: S): StorageValue<S> => {
+    const newState = { ...state };
+    for (const key in newState) {
+      if (typeof newState[key] === "function") {
+        delete newState[key];
+      }
+    }
+    return {
+      state: newState,
+      version: options.version,
+    };
+  };
+
+  const docRef = (): DocumentReference<DocumentData, DocumentData> => {
+    if (!options.userId) {
+      return doc(getFirestore(), "users", "default", "data", options.name);
+    }
+
+    return doc(getFirestore(), "users", options.userId, "data", options.name);
+  };
+
+  const updateCache = async () => {
+    getDoc(docRef()).then(async (doc) => {
+      if (doc.exists()) {
+        const data = doc.data() as StorageValue<S>;
+        if (data) {
+          // migrate data
+          if (data.version !== options.version && options.migrate) {
+            const version = data.version ?? 0;
+            const result = options.migrate(data.state, version);
+            if (result instanceof Promise) {
+              data.state = await result;
+            } else {
+              data.state = result;
+            }
+          }
+
+          // Update state
+          api.setState({
+            ...api.getState(),
+            ...data.state,
+            cacheExpiry: calculateCacheExpiryTime(),
+          });
+        }
+      }
     });
   };
 
@@ -294,6 +359,7 @@ const newImpl: PersistImpl = (config, baseOptions) => (set, get, api) => {
     // bind is used to avoid `TypeError: Illegal invocation` error
     return toThenable(storage.getItem.bind(storage))(options.name)
       .then((deserializedStorageValue) => {
+        // TODO Fetch from Firestore if the cache has expired or does not exist
         if (deserializedStorageValue) {
           if (
             typeof deserializedStorageValue.version === "number" &&
@@ -312,8 +378,11 @@ const newImpl: PersistImpl = (config, baseOptions) => (set, get, api) => {
               `State loaded from storage couldn't be migrated since no migrate function was provided`,
             );
           } else {
+            updateCache();
             return [false, deserializedStorageValue.state] as const;
           }
+        } else {
+          updateCache();
         }
         return [false, undefined] as const;
       })
