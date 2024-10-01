@@ -364,9 +364,7 @@ function TypingField(): JSX.Element {
   const uniqueWords = getUniqueWords();
   const wordsResponse = useWords(uniqueWords);
   const correctInput = useCorrectInput();
-  const timeout = useSettingsStore(
-    (state) => state.settings.exercise.autoSkipTime,
-  );
+  const timeout = useSettingsStore((state) => state.exercise.autoSkipTime);
   const timer = useTimerStore();
   const targetWpms = wordsResponse.data
     ? wordsResponse.data.map((word) =>

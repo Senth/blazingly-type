@@ -16,7 +16,8 @@ export default function Settings(): JSX.Element {
 }
 
 function ExerciseSettings(): JSX.Element {
-  const { settings, setExercise } = useSettingsStore();
+  const { exercise, setExercise } = useSettingsStore();
+  const autoSkipTime = useSettingsStore((state) => state.exercise.autoSkipTime);
   const [autoSkipTimeMessage, setAutoSkipTimeMessage] = useState<string>("");
   const [wpmDecayPerDayMessage, setWpmDecayPerDayMessage] =
     useState<string>("");
@@ -29,10 +30,10 @@ function ExerciseSettings(): JSX.Element {
         <Input
           className="w-16"
           type="string"
-          value={settings.exercise.autoSkipTime}
+          value={autoSkipTime}
           onCommit={(value) => {
             if (typeof value === "string") {
-              setExercise({ ...settings.exercise, autoSkipTime: value });
+              setExercise({ ...exercise, autoSkipTime: value });
             }
           }}
           validate={validateAutoSkipTime}
@@ -56,10 +57,10 @@ function ExerciseSettings(): JSX.Element {
           className="w-16"
           type="number"
           step="0.5"
-          value={settings.exercise.wpmDecayPerDay}
+          value={exercise.wpmDecayPerDay}
           onCommit={(value) => {
             if (typeof value === "number") {
-              setExercise({ ...settings.exercise, wpmDecayPerDay: value });
+              setExercise({ ...exercise, wpmDecayPerDay: value });
             }
           }}
           validate={validateWpmDecay}

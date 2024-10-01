@@ -3,7 +3,6 @@
 ## Next Up
 
 - Generic Middleware to save store in DB and local storage
-  - Delete existing settings data from DB
   - Test if save and load works correctly
     - Change the local storage and reload.
     - Expire the local storage and it should load differently now.

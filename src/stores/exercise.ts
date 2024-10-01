@@ -184,7 +184,7 @@ async function sortWords(
       break;
     case OrderTypes.Slowest:
     default:
-      const settings = settingsActions.settings;
+      const settingsExercise = settingsActions.exercise;
       const wordStats = await getWords(words);
 
       // Couldn't fetch word statistics, just randomize the words...
@@ -205,7 +205,7 @@ async function sortWords(
           Date.now() - wordStats[i].lastPracticeDatetime.getTime();
         const daysSinceLastPracticed = differenceInTime / (1000 * 60 * 60 * 24);
         const decrease =
-          settings.exercise.wpmDecayPerDay * daysSinceLastPracticed;
+          settingsExercise.wpmDecayPerDay * daysSinceLastPracticed;
 
         const wordSortStat = highestWpm - decrease;
 
