@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface InputProps extends React.HTMLProps<HTMLInputElement> {
   label?: string;
@@ -16,10 +16,13 @@ export interface Validation {
 }
 
 export default function Input(props: InputProps): JSX.Element {
-  const [value, setValue] = useState(props.value);
   const [tempValue, setTempValue] = useState(props.value);
   const [isValid, setIsValid] = useState(true);
   const leaveState = useRef("");
+
+  useEffect(() => {
+    setTempValue(props.value);
+  }, [props.value]);
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.key === "Enter" || event.key === "Tab") {
@@ -28,7 +31,7 @@ export default function Input(props: InputProps): JSX.Element {
         event.currentTarget.blur();
       }
     } else if (event.key === "Escape") {
-      setTempValue(value);
+      setTempValue(props.value);
       leaveState.current = "Escape";
       event.currentTarget.blur();
     }
@@ -46,7 +49,7 @@ export default function Input(props: InputProps): JSX.Element {
       props.onCommit &&
       leaveState.current !== "Escape" &&
       tempValue !== undefined &&
-      tempValue !== value
+      tempValue !== props.value
     ) {
       let isValid = true;
       let committedValue = tempValue;
@@ -66,7 +69,6 @@ export default function Input(props: InputProps): JSX.Element {
         props.onCommit(committedValue);
       }
     }
-    setValue(tempValue);
   }
 
   function handleFocus() {

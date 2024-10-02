@@ -272,15 +272,15 @@ const newImpl: PersistImpl = (config, baseOptions) => (set, get, api) => {
 
   const convertToFSObject = (state: S): StorageValue<S> => {
     // Remove functions from the state
-    const newState = { ...state };
-    for (const key in newState) {
-      if (typeof newState[key] === "function") {
-        delete newState[key];
+    const fsState = { ...state };
+    for (const key in fsState) {
+      if (typeof fsState[key] === "function") {
+        delete fsState[key];
       }
     }
 
     return {
-      state: newState,
+      state: fsState,
       version: options.version,
     };
   };
@@ -316,14 +316,11 @@ const newImpl: PersistImpl = (config, baseOptions) => (set, get, api) => {
             cacheExpiry: calculateCacheExpiryTime(),
           });
 
-          set((state) => {
-            console.log("current state", state);
-            const newState = {
+          set(() => {
+            return {
               ...data.state,
             };
-            console.log("new state", newState);
-            return newState;
-          }, false);
+          });
         }
       }
     });

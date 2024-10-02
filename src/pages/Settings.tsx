@@ -17,7 +17,6 @@ export default function Settings(): JSX.Element {
 
 function ExerciseSettings(): JSX.Element {
   const { exercise, setExercise } = useSettingsStore();
-  const autoSkipTime = useSettingsStore((state) => state.exercise.autoSkipTime);
   const [autoSkipTimeMessage, setAutoSkipTimeMessage] = useState<string>("");
   const [wpmDecayPerDayMessage, setWpmDecayPerDayMessage] =
     useState<string>("");
@@ -30,7 +29,7 @@ function ExerciseSettings(): JSX.Element {
         <Input
           className="w-16"
           type="string"
-          value={autoSkipTime}
+          value={exercise.autoSkipTime}
           onCommit={(value) => {
             if (typeof value === "string") {
               setExercise({ ...exercise, autoSkipTime: value });
