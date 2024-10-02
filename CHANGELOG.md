@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2024-10-01 - 2024-10-31
+
+### ➕ Added
+
+- Settings page. Stored in cloud with cache in local storage.
+  - Auto skip time. Automatically skip the exercise after a certain time.
+  - WPM Decay. Used to sword words on slowest WPM.
+
 ## 2024-07-06 - 2024-07-31
 
 ### ➕ Added

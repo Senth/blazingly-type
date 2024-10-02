@@ -21,6 +21,7 @@ const useSettingsStore = create<SettingsStore>()(
       name: "settings",
       version: Settings.version,
       userId: getUserId(),
+      cacheExpiryInMinutes: 60,
     },
   ),
 );

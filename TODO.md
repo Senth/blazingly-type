@@ -2,13 +2,7 @@
 
 ## Next Up
 
-- Generic Middleware to save store in DB and local storage
-  - Test if save and load works correctly
-    - Change the local storage and reload.
-    - Expire the local storage and it should load differently now.
 - Settings page
-  - Save settings in the cloud
-  - Cache the settings locally
   - Advanced settings
   - Multiple keyboard layouts
   - Go back to Practice page
