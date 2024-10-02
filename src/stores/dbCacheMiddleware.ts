@@ -294,7 +294,6 @@ const newImpl: PersistImpl = (config, baseOptions) => (set, get, api) => {
   };
 
   const updateLocalCache = async () => {
-    console.log("updateLocalCache");
     getDoc(docRef()).then(async (doc) => {
       if (doc.exists()) {
         const data = doc.data() as StorageValue<S>;
@@ -389,13 +388,11 @@ const newImpl: PersistImpl = (config, baseOptions) => (set, get, api) => {
             // Update local cache if has expired
             const cacheExpiry = deserializedStorageValue.cacheExpiry ?? 0;
             if (cacheExpiry < new Date().getTime()) {
-              console.log("Cache expired");
               updateLocalCache();
             }
             return [false, deserializedStorageValue.state] as const;
           }
         } else {
-          console.log("No local cache found, updating from FS");
           updateLocalCache();
         }
         return [false, undefined] as const;
