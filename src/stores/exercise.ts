@@ -11,6 +11,7 @@ import { defaultLessons, Lesson } from "@models/lesson";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { timerActions } from "./timer";
+import { settingsActions } from "./settings";
 
 export interface PreviousWord {
   word: string;
@@ -183,6 +184,7 @@ async function sortWords(
       break;
     case OrderTypes.Slowest:
     default:
+      const settingsExercise = settingsActions.exercise;
       const wordStats = await getWords(words);
 
       // Couldn't fetch word statistics, just randomize the words...
@@ -202,7 +204,8 @@ async function sortWords(
         const differenceInTime =
           Date.now() - wordStats[i].lastPracticeDatetime.getTime();
         const daysSinceLastPracticed = differenceInTime / (1000 * 60 * 60 * 24);
-        const decrease = 3 * daysSinceLastPracticed;
+        const decrease =
+          settingsExercise.wpmDecayPerDay * daysSinceLastPracticed;
 
         const wordSortStat = highestWpm - decrease;
 

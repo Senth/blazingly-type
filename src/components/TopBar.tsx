@@ -3,6 +3,7 @@ import useUILayoutStore from "@stores/uiLayout";
 import useUserProfileStore from "@stores/userProfile";
 import { useEffect, useRef, useState } from "react";
 import { MdAccountCircle } from "react-icons/md";
+import { Link } from "react-router-dom";
 
 interface TopBarProps {
   menu?: React.ReactNode;
@@ -80,7 +81,7 @@ function UserMenu({
       ref={menuRef}
       className="absolute bg-slate-900 flex flex-col items-center top-16 right-5 rounded-lg drop-shadow-md"
     >
-      <MenuItemButton text="Coming..." onClick={() => {}} />
+      <MenuItemButton text="Settings" href="/settings" />
       <hr className="w-full h-0.5 bg-slate-500" />
       {user && (
         <MenuItemButton
@@ -106,14 +107,25 @@ function UserMenu({
 
 function MenuItemButton(props: {
   text: string;
-  onClick: () => void;
-}): JSX.Element {
-  return (
-    <button
-      className="text-left w-full p-2 m-2 min-w-32 hover:bg-slate-500 active:bg-slate-700"
-      onClick={props.onClick}
-    >
-      {props.text}
-    </button>
-  );
+  href?: string;
+  onClick?: () => void;
+}): JSX.Element | null {
+  const className =
+    "text-left w-full p-2 m-2 min-w-32 hover:bg-slate-500 active:bg-slate-700";
+  // Regular button where we subscribe to onClick event
+  if (props.onClick) {
+    return (
+      <button className={className} onClick={props.onClick}>
+        {props.text}
+      </button>
+    );
+  } else if (props.href) {
+    return (
+      // eslint-disable-next-line react/jsx-no-undef
+      <Link className={className} to={props.href}>
+        {props.text}
+      </Link>
+    );
+  }
+  return null;
 }

@@ -1,9 +1,10 @@
 export interface Settings {
-  exercises: SettingsExercises;
+  exercise: SettingsExercise;
 }
 
-export interface SettingsExercises {
-  timeout: string;
+export interface SettingsExercise {
+  autoSkipTime: string;
+  wpmDecayPerDay: number;
 }
 
 export interface SingleSetting<T> {
@@ -14,9 +15,12 @@ export interface SingleSetting<T> {
 export namespace Settings {
   export function New(): Settings {
     return {
-      exercises: {
-        timeout: "3:00",
+      exercise: {
+        autoSkipTime: "3:00",
+        wpmDecayPerDay: 2.5,
       },
     };
   }
+
+  export const version = 0;
 }
