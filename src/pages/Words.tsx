@@ -40,6 +40,7 @@ function WordsTable(): JSX.Element {
           <th colSpan={2} className="font-bold px-2">
             Last Practice WPM
           </th>
+          <th className="font-bold px-2">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -57,6 +58,16 @@ function WordsTable(): JSX.Element {
             </td>
             <td className="px-2 text-gray-400 w-32">
               {formattedDate(word.lastPracticeDatetime)}
+            </td>
+            <td className="px-2 text-2xl text-center w-10">
+              <button
+                className="hover:text-red-400"
+                onClick={() => {
+                  wordsResponse.delete(word);
+                }}
+              >
+                <span className="material">delete</span>
+              </button>
             </td>
           </tr>
         ))}

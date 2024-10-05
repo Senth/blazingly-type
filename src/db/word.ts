@@ -7,6 +7,7 @@ import {
   getFirestore,
   getDocs,
   collection,
+  deleteDoc,
 } from "firebase/firestore";
 import useSWR from "swr";
 import "@auth";
@@ -88,9 +89,14 @@ function mapFSWordToWord(word: any): Word {
   } as Word;
 }
 
-export async function saveWord(uid: string, word: Word): Promise<void> {
+export async function saveWordFS(uid: string, word: Word): Promise<void> {
   const docRef = doc(firestore, "users", uid, "words", Word.hash(word.word));
   return setDoc(docRef, word);
+}
+
+async function deleteWordFS(uid: string, word: Word): Promise<void> {
+  const docRef = doc(firestore, "users", uid, "words", Word.hash(word.word));
+  return deleteDoc(docRef);
 }
 
 export async function getWords(words: string[]): Promise<Word[]> {
@@ -112,11 +118,26 @@ export function useWords(words: string[] | undefined) {
   const wordRequest: WordRequest = { uid, words };
   const swrResponse = useSWR(wordRequest, fetchWords);
 
+  function deleteWord(word: Word) {
+    const words = swrResponse.data;
+    if (!words || !uid) {
+      return;
+    }
+
+    deleteWordFS(uid, word)
+      .then(() => {
+        swrResponse.mutate(words.filter((w) => w.word !== word.word));
+      })
+      .catch((error) => {
+        console.error("Error deleting word:", error);
+      });
+  }
+
   function mutateWords(words: Word[]) {
     swrResponse.mutate(words);
     words.forEach((word) => {
       if (uid) {
-        saveWord(uid, word).catch((error) => {
+        saveWordFS(uid, word).catch((error) => {
           console.error("Error saving word:", error);
         });
       } else {
@@ -128,5 +149,6 @@ export function useWords(words: string[] | undefined) {
   return {
     ...swrResponse,
     mutate: mutateWords,
+    delete: deleteWord,
   };
 }

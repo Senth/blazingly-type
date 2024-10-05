@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
   - Auto skip time. Automatically skip the exercise after a certain time.
   - WPM Decay. Used to sword words on slowest WPM.
 - Words page. Shows all the practice words, their WPM and last practiced time.
+  - You can delete words from the list.
 
 ## 2024-07-06 - 2024-07-31
 
