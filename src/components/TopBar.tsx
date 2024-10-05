@@ -79,10 +79,11 @@ function UserMenu({
   return (
     <div
       ref={menuRef}
-      className="absolute bg-slate-900 flex flex-col items-center top-16 right-5 rounded-lg drop-shadow-md"
+      className="absolute bg-slate-900 py-2 flex flex-col items-center top-16 right-5 rounded-lg drop-shadow-md"
     >
+      <MenuItemButton text="Words" href="/words" />
       <MenuItemButton text="Settings" href="/settings" />
-      <hr className="w-full h-0.5 bg-slate-500" />
+      <hr className="w-full my-2 h-0.5 bg-slate-500" />
       {user && (
         <MenuItemButton
           text="Logout"
@@ -111,7 +112,7 @@ function MenuItemButton(props: {
   onClick?: () => void;
 }): JSX.Element | null {
   const className =
-    "text-left w-full p-2 m-2 min-w-32 hover:bg-slate-500 active:bg-slate-700";
+    "text-left w-full p-2 mx-2 min-w-32 hover:bg-slate-500 active:bg-slate-700";
   // Regular button where we subscribe to onClick event
   if (props.onClick) {
     return (
