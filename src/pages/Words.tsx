@@ -32,21 +32,45 @@ function WordsTable(): JSX.Element {
   return (
     <table className="w-full">
       <thead>
-        <tr>
-          <th>Word</th>
-          <th>Highest WPM</th>
-          <th>Last Practice WPM</th>
+        <tr className="text-lg">
+          <th className="text-left font-bold px-2">Word</th>
+          <th colSpan={2} className="font-bold px-2">
+            Highest WPM
+          </th>
+          <th colSpan={2} className="font-bold px-2">
+            Last Practice WPM
+          </th>
         </tr>
       </thead>
       <tbody>
         {words.map((word) => (
-          <tr key={word.word}>
-            <td>{word.word}</td>
-            <td>{word.highestWpm}</td>
-            <td>{word.lastPracticeWpm}</td>
+          <tr className="hover:bg-slate-700" key={word.word}>
+            <td className="px-2">{word.word}</td>
+            <td className="text-right px-2 w-24">
+              {word.highestWpm.toFixed(1)}
+            </td>
+            <td className="px-2 text-gray-400 w-32">
+              {formattedDate(word.highestWpmDatetime)}
+            </td>
+            <td className="text-right px-2 w-24">
+              {word.lastPracticeWpm.toFixed(1)}
+            </td>
+            <td className="px-2 text-gray-400 w-32">
+              {formattedDate(word.lastPracticeDatetime)}
+            </td>
           </tr>
         ))}
       </tbody>
     </table>
   );
+}
+
+function formattedDate(date: Date): string {
+  const locale = navigator.language || "en-US";
+  const formatted = date.toLocaleDateString(locale, {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+  });
+  return formatted;
 }

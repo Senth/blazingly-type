@@ -3,11 +3,9 @@
 ## Next Up
 
 - Word page: Show all the practiced words and their WPM
-  - Show all the words
-  - Show times
-  - Improve the layout
   - Reset/Remove word
-- Back button on the top bar
+  - Top bar with back button
+  - Top bar should be sticky
 - Add local caching for useWords()
 - Add choring WPM to words
 - Calculate if the word was typed manually or using chords
