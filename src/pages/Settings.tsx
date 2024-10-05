@@ -9,7 +9,7 @@ export default function Settings(): JSX.Element {
   return (
     <div className="h-full w-full flex flex-col">
       <TopBar title="Settings" backButton />
-      <div className="h-full w-full flex flex-col p-5">
+      <div className="grow w-full p-5">
         <ExerciseSettings />
       </div>
     </div>

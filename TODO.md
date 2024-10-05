@@ -2,9 +2,6 @@
 
 ## Next Up
 
-- Word page: Show all the practiced words and their WPM
-  - Top bar should be sticky
-  - Table header should be sticky
 - Add local caching for useWords()
 - Add choring WPM to words
 - Calculate if the word was typed manually or using chords
