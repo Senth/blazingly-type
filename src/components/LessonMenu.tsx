@@ -13,7 +13,7 @@ export function LessonMenuClosed(): JSX.Element | null {
       className="text-2xl flex font-medium cursor-pointer"
       onClick={() => setLessonMenuOpen(!isLessonMenuOpen)}
     >
-      <span className="material text-3xl mr-3">menu</span>
+      <span className="material text-3xl mr-3 hover:text-slate-300">menu</span>
       <span>Lessons </span>
     </div>
   );

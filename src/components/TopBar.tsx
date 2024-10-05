@@ -6,12 +6,24 @@ import { Link } from "react-router-dom";
 
 interface TopBarProps {
   menu?: React.ReactNode;
+  title?: string;
+  backButton?: boolean;
 }
 
 export default function TopBar(props: TopBarProps): JSX.Element {
   return (
     <div className="flex items-center justify-between border-b-slate-500 h-16 bg-slate-900 text-white px-5 drop-shadow-xl">
       {props.menu && <div className="mr-10">{props.menu}</div>}
+      <div className="flex text-2xl font-medium mt-2">
+        {props.backButton && (
+          <Link to="/" className="mr-3 hover:text-slate-300">
+            <span className="material text-3xl">arrow_back</span>
+          </Link>
+        )}
+        {props.title && (
+          <div className="text-2xl font-medium">{props.title}</div>
+        )}
+      </div>
 
       <div className="grow"></div>
       <UserProfile />

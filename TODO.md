@@ -3,7 +3,6 @@
 ## Next Up
 
 - Word page: Show all the practiced words and their WPM
-  - Top bar with back button
   - Top bar should be sticky
   - Table header should be sticky
 - Add local caching for useWords()

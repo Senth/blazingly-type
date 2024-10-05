@@ -8,7 +8,7 @@ import { useState } from "react";
 export default function Settings(): JSX.Element {
   return (
     <div className="h-full w-full flex flex-col">
-      <TopBar />
+      <TopBar title="Settings" backButton />
       <div className="h-full w-full flex flex-col p-5">
         <ExerciseSettings />
       </div>

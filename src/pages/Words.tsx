@@ -4,8 +4,8 @@ import { useWords } from "@db/word";
 export default function Words(): JSX.Element {
   return (
     <div className="h-full w-full flex flex-col">
-      <TopBar />
-      <div className="h-full w-full flex p-5">
+      <TopBar title="Words" backButton />
+      <div className="h-full w-full flex flex-col p-5">
         <WordsTable />
       </div>
     </div>
