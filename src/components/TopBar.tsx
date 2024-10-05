@@ -2,7 +2,6 @@ import { logout } from "@auth";
 import useUILayoutStore from "@stores/uiLayout";
 import useUserProfileStore from "@stores/userProfile";
 import { useEffect, useRef, useState } from "react";
-import { MdAccountCircle } from "react-icons/md";
 import { Link } from "react-router-dom";
 
 interface TopBarProps {
@@ -45,7 +44,7 @@ function UserProfile(): JSX.Element {
       ) : (
         <>
           <div>Not logged in</div>
-          <MdAccountCircle size={48} className="w-10 h-10" />
+          <div className="material text-3xl w-8 h-8">account_circle</div>
         </>
       )}
       {isMenuOpen && <UserMenu setMenuOpen={setMenuOpen} />}

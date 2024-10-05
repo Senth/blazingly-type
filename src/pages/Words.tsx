@@ -59,7 +59,7 @@ function WordsTable(): JSX.Element {
             <td className="px-2 text-gray-400 w-32">
               {formattedDate(word.lastPracticeDatetime)}
             </td>
-            <td className="px-2 text-2xl text-center w-10">
+            <td className="px-2 text-center w-10">
               <button
                 className="hover:text-red-400"
                 onClick={() => {

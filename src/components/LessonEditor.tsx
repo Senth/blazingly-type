@@ -3,7 +3,6 @@ import { ModalContent } from "./Modals";
 import Button from "./basic/button";
 import Input from "./basic/input";
 import TextArea from "./basic/textarea";
-import { MdExpandLess, MdExpandMore, MdInfo } from "react-icons/md";
 import { getUserId } from "@auth";
 import { upsertLesson, useLessons } from "@db/lesson";
 import Checkbox from "./basic/checkbox";
@@ -54,7 +53,7 @@ export default function LessonEditorModal(): JSX.Element | null {
     <ModalContent full={true} title={title} buttons={buttons}>
       {!lesson.custom && (
         <div className="text-yellow-400 flex items-center mb-5">
-          <MdInfo className="w-8 h-8 mr-3" />
+          <span className="material mr-3">info</span>
           <span>
             This is a built-in lesson. You <strong>create copy</strong> below to
             make changes.
@@ -113,7 +112,7 @@ function AdvancedSettings(): JSX.Element {
         className="mt-5 flex items-center cursor-pointer"
         onClick={() => setAdvancedOpen(true)}
       >
-        <MdExpandMore className="w-8 h-8" />
+        <span className="material">expand_more</span>
         Advanced Settings
       </div>
     );
@@ -125,7 +124,7 @@ function AdvancedSettings(): JSX.Element {
         className="flex items-center cursor-pointer"
         onClick={() => setAdvancedOpen(false)}
       >
-        <MdExpandLess className="w-8 h-8" />
+        <span className="material">expand_less</span>
         <span>Advanced Settings</span>
       </div>
       <div className="mt-5">
