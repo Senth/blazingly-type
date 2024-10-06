@@ -70,7 +70,6 @@ export function getDefaultLocaleDateFormat(): string {
     if (part === dateComponents.year) return "YYYY";
     return part;
   });
-  console.log(formatParts);
 
   // Extract the separator used in the formatted date
   const separatorMatch = formattedDate.match(/[^0-9]+/);
