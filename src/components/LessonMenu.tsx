@@ -4,7 +4,6 @@ import useExerciseStore from "@stores/exercise";
 import useLessonEditorStore from "@stores/lessonEditor";
 import useUILayoutStore from "@stores/uiLayout";
 import { useState } from "react";
-import { MdAdd, MdEdit, MdMenu } from "react-icons/md";
 
 export function LessonMenuClosed(): JSX.Element | null {
   const { isLessonMenuOpen, setLessonMenuOpen } = useUILayoutStore();
@@ -14,7 +13,7 @@ export function LessonMenuClosed(): JSX.Element | null {
       className="text-2xl flex font-medium cursor-pointer"
       onClick={() => setLessonMenuOpen(!isLessonMenuOpen)}
     >
-      <MdMenu className="w-8 h-8 mr-3" />
+      <span className="material text-3xl mr-3 hover:text-slate-300">menu</span>
       <span>Lessons </span>
     </div>
   );
@@ -54,7 +53,7 @@ export function LessonMenu(): JSX.Element | null {
       >
         <div className="p-2">New Lesson...</div>
         <div className="grow"></div>
-        <MdAdd className="w-8 h-8 mr-2" />
+        <span className="material text-3xl mr-2">add</span>
       </button>
     </div>
   );
@@ -91,13 +90,15 @@ function LessonItem({ lesson }: { lesson: Lesson }): JSX.Element {
         onMouseLeave={() => setHovering(false)}
       ></div>
       <button className="hover:text-green-400 pr-2">
-        <MdEdit
-          className="w-8 h-8"
+        <span
+          className="material text-3xl w-8 h-8"
           onClick={(e) => {
             e.stopPropagation();
             editLesson(lesson);
           }}
-        />
+        >
+          edit
+        </span>
       </button>
     </div>
   );

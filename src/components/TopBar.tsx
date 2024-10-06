@@ -2,17 +2,28 @@ import { logout } from "@auth";
 import useUILayoutStore from "@stores/uiLayout";
 import useUserProfileStore from "@stores/userProfile";
 import { useEffect, useRef, useState } from "react";
-import { MdAccountCircle } from "react-icons/md";
 import { Link } from "react-router-dom";
 
 interface TopBarProps {
   menu?: React.ReactNode;
+  title?: string;
+  backButton?: boolean;
 }
 
 export default function TopBar(props: TopBarProps): JSX.Element {
   return (
-    <div className="flex items-center justify-between border-b-slate-500 h-16 bg-slate-900 text-white px-5 drop-shadow-xl">
+    <div className="flex flex-none items-center justify-between border-b-slate-500 h-16 bg-slate-900 text-white px-5 drop-shadow-xl">
       {props.menu && <div className="mr-10">{props.menu}</div>}
+      <div className="flex text-2xl font-medium mt-2">
+        {props.backButton && (
+          <Link to="/" className="mr-3 hover:text-slate-300">
+            <span className="material text-3xl">arrow_back</span>
+          </Link>
+        )}
+        {props.title && (
+          <div className="text-2xl font-medium">{props.title}</div>
+        )}
+      </div>
 
       <div className="grow"></div>
       <UserProfile />
@@ -45,7 +56,7 @@ function UserProfile(): JSX.Element {
       ) : (
         <>
           <div>Not logged in</div>
-          <MdAccountCircle size={48} className="w-10 h-10" />
+          <div className="material text-3xl w-8 h-8">account_circle</div>
         </>
       )}
       {isMenuOpen && <UserMenu setMenuOpen={setMenuOpen} />}
@@ -79,10 +90,11 @@ function UserMenu({
   return (
     <div
       ref={menuRef}
-      className="absolute bg-slate-900 flex flex-col items-center top-16 right-5 rounded-lg drop-shadow-md"
+      className="absolute bg-slate-900 py-2 flex flex-col items-center top-16 right-5 rounded-lg drop-shadow-md"
     >
+      <MenuItemButton text="Words" href="/words" />
       <MenuItemButton text="Settings" href="/settings" />
-      <hr className="w-full h-0.5 bg-slate-500" />
+      <hr className="w-full my-2 h-0.5 bg-slate-500" />
       {user && (
         <MenuItemButton
           text="Logout"
@@ -111,7 +123,7 @@ function MenuItemButton(props: {
   onClick?: () => void;
 }): JSX.Element | null {
   const className =
-    "text-left w-full p-2 m-2 min-w-32 hover:bg-slate-500 active:bg-slate-700";
+    "text-left w-full p-2 mx-2 min-w-32 hover:bg-slate-500 active:bg-slate-700";
   // Regular button where we subscribe to onClick event
   if (props.onClick) {
     return (

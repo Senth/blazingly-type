@@ -5,7 +5,6 @@ import {
   doc,
   getDocs,
   getFirestore,
-  query,
   setDoc,
 } from "firebase/firestore";
 import useSWR from "swr";
@@ -18,8 +17,7 @@ export async function fetchLessons(uid?: string): Promise<Lesson[]> {
   }
 
   const lessonsRef = collection(firestore, "users", uid, "lessons");
-  const q = query(lessonsRef);
-  return getDocs(q).then((querySnapshot) => {
+  return getDocs(lessonsRef).then((querySnapshot) => {
     const lessons = querySnapshot.docs.map((doc) => ({
       ...(doc.data() as Lesson),
       id: doc.id,
