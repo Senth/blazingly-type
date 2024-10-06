@@ -1,5 +1,6 @@
 import TopBar from "@components/TopBar";
 import { useWords } from "@db/word";
+import { useState } from "react";
 
 export default function Words(): JSX.Element {
   return (
@@ -12,8 +13,23 @@ export default function Words(): JSX.Element {
   );
 }
 
+enum Columns {
+  Word,
+  HighestWpm,
+  HighestWpmDatetime,
+  LastPracticeWpm,
+  LastPracticeWpmDatetime,
+}
+
+enum Order {
+  ASC,
+  DESC,
+}
+
 function WordsTable(): JSX.Element {
   const wordsResponse = useWords(undefined);
+  const [order, setOrder] = useState<Order>(Order.ASC);
+  const [sortBy, setSortBy] = useState<Columns>(Columns.Word);
 
   if (wordsResponse.error) {
     return <div>Error: {wordsResponse.error.message}</div>;
@@ -27,27 +43,84 @@ function WordsTable(): JSX.Element {
     return <div>No words found.</div>;
   }
 
-  words.sort((a, b) => a.word.localeCompare(b.word));
+  words.sort((a, b) => {
+    let result = 0;
+    switch (sortBy) {
+      case Columns.Word:
+        result = a.word.localeCompare(b.word);
+        break;
+      case Columns.HighestWpm:
+        result = a.highestWpm - b.highestWpm;
+        break;
+      case Columns.HighestWpmDatetime:
+        result =
+          a.highestWpmDatetime.getTime() - b.highestWpmDatetime.getTime();
+        break;
+      case Columns.LastPracticeWpm:
+        result = a.lastPracticeWpm - b.lastPracticeWpm;
+        break;
+      case Columns.LastPracticeWpmDatetime:
+        result =
+          a.lastPracticeDatetime.getTime() - b.lastPracticeDatetime.getTime();
+        break;
+    }
+    if (order === Order.DESC) {
+      result = 0 - result;
+    }
+    return result;
+  });
+
+  function setSort(column: Columns): void {
+    // Switch ASC/DESC
+    if (sortBy === column) {
+      switch (order) {
+        case Order.ASC:
+          setOrder(Order.DESC);
+          return;
+        case Order.DESC:
+          setOrder(Order.ASC);
+          return;
+      }
+    }
+
+    setSortBy(column);
+    setOrder(Order.ASC);
+  }
 
   return (
     <div className="table-container grow overflow-y-auto ">
       <table className="w-full table-fixed">
-        <colgroup>
-          <col className="" />
-          <col className="w-16" />
-          <col className="w-32" />
-          <col className="w-16" />
-          <col className="w-32" />
-          <col className="w-22" />
-        </colgroup>
         <thead className="top-0 sticky bg-blue-950 drop-shadow-lg text-lg">
           <tr>
-            <th className="p-3 pl-10 text-left font-bold px-2">Word</th>
-            <th colSpan={2} className="font-bold px-2">
-              Highest WPM
+            <th
+              className="p-3 pl-10 text-left font-bold px-2 cursor-pointer"
+              onClick={() => setSort(Columns.Word)}
+            >
+              Word
             </th>
-            <th colSpan={2} className="font-bold px-2">
-              Last Practice WPM
+            <th
+              className="font-bold px-2 text-right cursor-pointer"
+              onClick={() => setSort(Columns.HighestWpm)}
+            >
+              Record
+            </th>
+            <th
+              className="font-bold px-2 text-left cursor-pointer"
+              onClick={() => setSort(Columns.HighestWpmDatetime)}
+            >
+              Date
+            </th>
+            <th
+              className="font-bold px-2 text-right cursor-pointer"
+              onClick={() => setSort(Columns.LastPracticeWpm)}
+            >
+              Last Practice
+            </th>
+            <th
+              className="font-bold px-2 text-left cursor-pointer"
+              onClick={() => setSort(Columns.LastPracticeWpmDatetime)}
+            >
+              Date
             </th>
             <th className="font-bold pl-2 pr-10">Actions</th>
           </tr>
