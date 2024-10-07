@@ -1,4 +1,4 @@
-import { Word } from "@models/word";
+import { Word, WpmInfo } from "@models/word";
 import useUserProfileStore from "@stores/userProfile";
 import {
   doc,
@@ -82,11 +82,28 @@ async function fetchAllWords(uid: string): Promise<Word[]> {
 }
 
 function mapFSWordToWord(word: any): Word {
+  if (!Word.isLatest(word)) {
+    word = Word.migrate(word);
+  }
+
   return {
     ...word,
-    highestWpmDatetime: word.highestWpmDatetime.toDate(),
-    lastPracticeDatetime: word.lastPracticeDatetime.toDate(),
+    highest: mapFSDateToJSDate(word.highest),
+    lastPractice: mapFSDateToJSDate(word.lastPractice),
+    chordHighest: mapFSDateToJSDate(word.chordHighest),
+    chordLastPractice: mapFSDateToJSDate(word.chordLastPractice),
   } as Word;
+}
+
+function mapFSDateToJSDate(wpmInfo: any): WpmInfo | undefined {
+  if (!wpmInfo) {
+    return undefined;
+  }
+
+  return {
+    wpm: wpmInfo.wpm,
+    date: wpmInfo.date.toDate(),
+  };
 }
 
 export async function saveWordFS(uid: string, word: Word): Promise<void> {

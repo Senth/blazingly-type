@@ -2,7 +2,10 @@
 
 ## Next Up
 
-- Remove the `data` field from the Cache middleware
+- Chording
+  - Add chording checkbox to a lesson. This will treats all words practiced as chording
+  - WPM calculation for chording
+  - Add chording WPM to words page (if there is any chording word)
 - UseStorage better caching for words
   - Create a useWords hook that uses storage
   - Create a new advanced DBCache middleware (copy existing)
@@ -11,8 +14,6 @@
   - Able to fetch all words (items)
   - Update the cache after fetching
   - Update both FS and IndexedDB when updating the cache
-- Add chording WPM to words
-- Add chording checkbox to a lesson. This treats all words practiced as chording.
 - Calculate if the word was typed manually or using chords
 
 ## To Do

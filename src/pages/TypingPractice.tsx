@@ -368,7 +368,7 @@ function TypingField(): JSX.Element {
   const timer = useTimerStore();
   const targetWpms = wordsResponse.data
     ? wordsResponse.data.map((word) =>
-        calculateTargetWpm(target, word.highestWpm).toFixed(1),
+        calculateTargetWpm(target, word.highest.wpm).toFixed(1),
       )
     : Array.from({ length: uniqueWords.length }, () => "0.0");
 
@@ -487,7 +487,7 @@ function TypingField(): JSX.Element {
           word: currentWords[i],
           wpm: wordWpms[i].toFixed(1),
           targetWpm: targetWpms[i],
-          isHighscore: wordWpms[i] > words[i].highestWpm,
+          isHighscore: wordWpms[i] > words[i].highest.wpm,
         });
         words[i] = Word.updateWpm(words[i], wordWpms[i]);
       }
@@ -571,7 +571,7 @@ function WPMDisplay(): JSX.Element {
     ) {
       targetColumn.text = calculateTargetWpm(
         target,
-        wordsResponse.data[i].highestWpm,
+        wordsResponse.data[i].highest.wpm,
       ).toFixed(1);
     }
 
