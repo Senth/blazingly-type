@@ -3,8 +3,8 @@
 ## Next Up
 
 - Chording
-  - Add chording checkbox to a lesson. This will treats all words practiced as chording
-  - WPM calculation for chording
+  - WPM calculation for chording lesson
+  - Test chording lesson
   - Add chording WPM to words page (if there is any chording word)
 - UseStorage better caching for words
   - Create a useWords hook that uses storage

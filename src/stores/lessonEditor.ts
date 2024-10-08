@@ -12,6 +12,7 @@ interface LessonEditorStore {
   setLesson(lesson: Lesson): void;
   setDelimiter(enabled: boolean, value?: string): void;
   setKeepSpace(enabled: boolean): void;
+  setChorded(enabled: boolean): void;
   close(): void;
   copy(): void;
 }
@@ -40,6 +41,14 @@ const useLessonEditorStore = create<LessonEditorStore>()(
           lesson.settings = {};
         }
         lesson.settings.keepSpaces = enabled;
+        set({ lesson });
+      },
+      setChorded: (enabled) => {
+        const { lesson } = get();
+        if (!lesson.settings) {
+          lesson.settings = {};
+        }
+        lesson.settings.chorded = enabled;
         set({ lesson });
       },
       close: () => set({ isEditorOpen: false }),
