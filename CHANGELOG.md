@@ -12,6 +12,9 @@ All notable changes to this project will be documented in this file.
 - Words page. Shows all the practice words, their WPM and last practiced time.
   - You can delete words from the list.
   - You can sort by the different columns.
+- Chording support. You can now set a lesson to be chording. This means that words are typed as chords.
+  - Note, only a few keyboards support this feature.
+  - Chording WPM is calculated separately from normal WPM. The value is basically reaction time.
 
 ## 2024-07-06 - 2024-07-31
 

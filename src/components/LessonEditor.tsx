@@ -104,6 +104,7 @@ function AdvancedSettings(): JSX.Element {
     lesson,
     setDelimiter,
     setKeepSpace,
+    setChorded,
   } = useLessonEditorStore();
 
   if (!isAdvancedOpen) {
@@ -154,6 +155,19 @@ function AdvancedSettings(): JSX.Element {
           helpText="Don't remove leading and trailing spaces from words. For example, combining ' == ' with ' != ' will keep two spaces between the words."
           checked={!!lesson?.settings?.keepSpaces}
           onChecked={(checked) => setKeepSpace(checked)}
+        />
+      </div>
+      <div className="mt-5">
+        <Checkbox
+          label="Chorded lesson"
+          disabled={!lesson.custom}
+          helpText={`
+						Practice words in chords by pressing multiple keys at the same time. Note, this requires a special keyboard.
+						If you don't know what this is, keep it disabled.
+						WPM will be based of the time it takes until the first letter in the word is typed, including the space before the word.
+					`}
+          checked={!!lesson?.settings?.chorded}
+          onChecked={(checked) => setChorded(checked)}
         />
       </div>
     </div>

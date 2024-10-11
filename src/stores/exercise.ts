@@ -199,10 +199,10 @@ async function sortWords(
       // Create sort statistics: WPM * multiplier * days since last practiced
       const wordAndStats: [string, number][] = [];
       for (let i = 0; i < words.length; i++) {
-        const highestWpm = wordStats[i].highestWpm || 1;
+        const highestWpm = wordStats[i].highest.wpm || 1;
 
         const differenceInTime =
-          Date.now() - wordStats[i].lastPracticeDatetime.getTime();
+          Date.now() - wordStats[i].lastPractice.date.getTime();
         const daysSinceLastPracticed = differenceInTime / (1000 * 60 * 60 * 24);
         const decrease =
           settingsExercise.wpmDecayPerDay * daysSinceLastPracticed;

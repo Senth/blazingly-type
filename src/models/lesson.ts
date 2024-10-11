@@ -15,6 +15,7 @@ export interface Lesson {
 export interface LessonSettings {
   delimiter?: SingleSetting<string>;
   keepSpaces?: boolean;
+  chorded?: boolean;
 }
 
 export namespace Lesson {

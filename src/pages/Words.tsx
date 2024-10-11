@@ -50,18 +50,16 @@ function WordsTable(): JSX.Element {
         result = a.word.localeCompare(b.word);
         break;
       case Columns.HighestWpm:
-        result = a.highestWpm - b.highestWpm;
+        result = a.highest.wpm - b.highest.wpm;
         break;
       case Columns.HighestWpmDatetime:
-        result =
-          a.highestWpmDatetime.getTime() - b.highestWpmDatetime.getTime();
+        result = a.highest.date.getTime() - b.highest.date.getTime();
         break;
       case Columns.LastPracticeWpm:
-        result = a.lastPracticeWpm - b.lastPracticeWpm;
+        result = a.lastPractice.wpm - b.lastPractice.wpm;
         break;
       case Columns.LastPracticeWpmDatetime:
-        result =
-          a.lastPracticeDatetime.getTime() - b.lastPracticeDatetime.getTime();
+        result = a.lastPractice.date.getTime() - b.lastPractice.date.getTime();
         break;
     }
     if (order === Order.DESC) {
@@ -129,15 +127,15 @@ function WordsTable(): JSX.Element {
           {words.map((word) => (
             <tr className="hover:bg-slate-700" key={word.word}>
               <td className="pl-10 pr-2">{word.word}</td>
-              <td className="text-right px-2">{word.highestWpm.toFixed(1)}</td>
+              <td className="text-right px-2">{word.highest.wpm.toFixed(1)}</td>
               <td className="px-2 text-gray-400">
-                {formattedDate(word.highestWpmDatetime)}
+                {formattedDate(word.highest.date)}
               </td>
               <td className="text-right px-2">
-                {word.lastPracticeWpm.toFixed(1)}
+                {word.lastPractice.wpm.toFixed(1)}
               </td>
               <td className="px-2 text-gray-400">
-                {formattedDate(word.lastPracticeDatetime)}
+                {formattedDate(word.lastPractice.date)}
               </td>
               <td className="pl-2 pr-10 text-center">
                 <button
