@@ -2,10 +2,6 @@
 
 ## Next Up
 
-- Chording
-  - WPM calculation for chording lesson
-  - Test chording lesson
-  - Add chording WPM to words page (if there is any chording word)
 - UseStorage better caching for words
   - Create a useWords hook that uses storage
   - Create a new advanced DBCache middleware (copy existing)

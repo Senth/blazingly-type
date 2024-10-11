@@ -19,6 +19,10 @@ enum Columns {
   HighestWpmDatetime,
   LastPracticeWpm,
   LastPracticeWpmDatetime,
+  ChordHighestWpm,
+  ChordHighestWpmDatetime,
+  ChordLastPracticeWpm,
+  ChordLastPracticeWpmDatetime,
 }
 
 enum Order {
@@ -43,6 +47,12 @@ function WordsTable(): JSX.Element {
     return <div>No words found.</div>;
   }
 
+  // We only want to display chorded columns if any word has any chorded data.
+  // 99.99% of users won't have any chorded data.
+  const showChordedColumns = words.some(
+    (word) => word.chordHighest || word.chordLastPractice,
+  );
+
   words.sort((a, b) => {
     let result = 0;
     switch (sortBy) {
@@ -60,6 +70,23 @@ function WordsTable(): JSX.Element {
         break;
       case Columns.LastPracticeWpmDatetime:
         result = a.lastPractice.date.getTime() - b.lastPractice.date.getTime();
+        break;
+      case Columns.ChordHighestWpm:
+        result = (a.chordHighest?.wpm ?? 0) - (b.chordHighest?.wpm ?? 0);
+        break;
+      case Columns.ChordHighestWpmDatetime:
+        result =
+          (a.chordHighest?.date.getTime() ?? 0) -
+          (b.chordHighest?.date.getTime() ?? 0);
+        break;
+      case Columns.ChordLastPracticeWpm:
+        result =
+          (a.chordLastPractice?.wpm ?? 0) - (b.chordLastPractice?.wpm ?? 0);
+        break;
+      case Columns.ChordLastPracticeWpmDatetime:
+        result =
+          (a.chordLastPractice?.date.getTime() ?? 0) -
+          (b.chordLastPractice?.date.getTime() ?? 0);
         break;
     }
     if (order === Order.DESC) {
@@ -120,6 +147,34 @@ function WordsTable(): JSX.Element {
             >
               Date
             </th>
+            {showChordedColumns && (
+              <>
+                <th
+                  className="font-bold px-2 text-right cursor-pointer"
+                  onClick={() => setSort(Columns.ChordHighestWpm)}
+                >
+                  Chord Record
+                </th>
+                <th
+                  className="font-bold px-2 text-left cursor-pointer"
+                  onClick={() => setSort(Columns.ChordHighestWpmDatetime)}
+                >
+                  Date
+                </th>
+                <th
+                  className="font-bold px-2 text-right cursor-pointer"
+                  onClick={() => setSort(Columns.ChordLastPracticeWpm)}
+                >
+                  Last Chord Practice
+                </th>
+                <th
+                  className="font-bold px-2 text-left cursor-pointer"
+                  onClick={() => setSort(Columns.ChordLastPracticeWpmDatetime)}
+                >
+                  Date
+                </th>
+              </>
+            )}
             <th className="font-bold pl-2 pr-10">Actions</th>
           </tr>
         </thead>
@@ -137,6 +192,26 @@ function WordsTable(): JSX.Element {
               <td className="px-2 text-gray-400">
                 {formattedDate(word.lastPractice.date)}
               </td>
+              {showChordedColumns && (
+                <>
+                  <td className="text-right px-2">
+                    {(word.chordHighest?.wpm ?? 0).toFixed(1)}
+                  </td>
+                  <td className="px-2 text-gray-400">
+                    {word.chordHighest
+                      ? formattedDate(word.chordHighest.date)
+                      : ""}
+                  </td>
+                  <td className="text-right px-2">
+                    {(word.chordLastPractice?.wpm ?? 0).toFixed(1)}
+                  </td>
+                  <td className="px-2 text-gray-400">
+                    {word.chordLastPractice
+                      ? formattedDate(word.chordLastPractice.date)
+                      : ""}
+                  </td>
+                </>
+              )}
               <td className="pl-2 pr-10 text-center">
                 <button
                   className="hover:text-red-400"
