@@ -21,7 +21,8 @@
     "lint": "eslint src",
     "lint-fix": "eslint src --fix",
     "test": "craco test",
-    "eject": "craco eject"
+    "eject": "craco eject",
+    "format": "prettier --write src/**/*.{js,jsx,ts,tsx,json,css,scss,md}"
   },
   "eslintConfig": {
     "extends": [
@@ -52,6 +53,7 @@
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@types/react-router-dom": "^5.3.3",
+    "prettier": "^3.3.3",
     "tailwindcss": "^3.4.5"
   }
 }

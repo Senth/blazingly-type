@@ -1,5 +1,5 @@
 interface TextAreaProps extends React.HTMLProps<HTMLTextAreaElement> {
-  label?: string;
+  label?: string
 }
 
 export default function TextArea(props: TextAreaProps): JSX.Element {
@@ -14,5 +14,5 @@ export default function TextArea(props: TextAreaProps): JSX.Element {
         onChange={props.onChange}
       />
     </div>
-  );
+  )
 }

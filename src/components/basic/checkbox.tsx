@@ -1,10 +1,10 @@
 export interface CheckboxProps {
-  label: string;
-  checked: boolean;
-  disabled?: boolean;
-  helpText?: string;
-  onChecked: (checked: boolean) => void;
-  children?: React.ReactNode;
+  label: string
+  checked: boolean
+  disabled?: boolean
+  helpText?: string
+  onChecked: (checked: boolean) => void
+  children?: React.ReactNode
 }
 
 export default function Checkbox({
@@ -35,5 +35,5 @@ export default function Checkbox({
         </>
       )}
     </div>
-  );
+  )
 }

@@ -1,11 +1,11 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from "zustand"
+import { persist } from "zustand/middleware"
 
 interface UILayoutStore {
-  isLessonMenuOpen: boolean;
-  setLessonMenuOpen: (isOpen: boolean) => void;
-  isLoginModalOpen: boolean;
-  setLoginModalOpen: (isOpen: boolean) => void;
+  isLessonMenuOpen: boolean
+  setLessonMenuOpen: (isOpen: boolean) => void
+  isLoginModalOpen: boolean
+  setLoginModalOpen: (isOpen: boolean) => void
 }
 
 const useUILayoutStore = create<UILayoutStore>()(
@@ -18,8 +18,8 @@ const useUILayoutStore = create<UILayoutStore>()(
     }),
     {
       name: "ui-layout",
-    },
-  ),
-);
+    }
+  )
+)
 
-export default useUILayoutStore;
+export default useUILayoutStore

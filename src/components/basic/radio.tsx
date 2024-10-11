@@ -1,18 +1,12 @@
 export interface RadioProps {
-  label: string;
-  checked: boolean;
-  name: string;
-  children?: React.ReactNode;
-  onChecked: () => void;
+  label: string
+  checked: boolean
+  name: string
+  children?: React.ReactNode
+  onChecked: () => void
 }
 
-export default function Radio({
-  label,
-  checked,
-  name,
-  children,
-  onChecked,
-}: RadioProps): JSX.Element {
+export default function Radio({ label, checked, name, children, onChecked }: RadioProps): JSX.Element {
   return (
     <label htmlFor={label}>
       <input
@@ -23,10 +17,10 @@ export default function Radio({
         value={label}
         checked={checked}
         onChange={(checked) => {
-          checked && onChecked();
+          checked && onChecked()
         }}
       />
       {children ? children : label}
     </label>
-  );
+  )
 }

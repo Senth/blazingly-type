@@ -1,25 +1,25 @@
-import { Lesson } from "./lesson";
+import { Lesson } from "./lesson"
 
 export interface Exercises {
-  lesson: Lesson;
-  allExercises: string[][];
-  currentExerciseIndex: number;
-  generation: ExerciseGeneration;
-  maxTime: MaxTime;
-  target: Target;
+  lesson: Lesson
+  allExercises: string[][]
+  currentExerciseIndex: number
+  generation: ExerciseGeneration
+  maxTime: MaxTime
+  target: Target
 }
 
 export interface MaxTime {
-  minutes: number;
-  enabled: boolean;
+  minutes: number
+  enabled: boolean
 }
 
 export interface ExerciseGeneration {
-  combinations: number;
-  repetitions: number;
-  order: OrderTypes;
-  maxExercises: number;
-  maxExercisesEnabled: boolean;
+  combinations: number
+  repetitions: number
+  order: OrderTypes
+  maxExercises: number
+  maxExercisesEnabled: boolean
 }
 
 export enum OrderTypes {
@@ -28,9 +28,9 @@ export enum OrderTypes {
 }
 
 export interface Target {
-  selected: Targets;
-  percentage?: number;
-  relative?: number;
+  selected: Targets
+  percentage?: number
+  relative?: number
 }
 
 export enum Targets {

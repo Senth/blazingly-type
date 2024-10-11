@@ -1,13 +1,13 @@
-import { logout } from "@auth";
-import useUILayoutStore from "@stores/uiLayout";
-import useUserProfileStore from "@stores/userProfile";
-import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { logout } from "@auth"
+import useUILayoutStore from "@stores/uiLayout"
+import useUserProfileStore from "@stores/userProfile"
+import { useEffect, useRef, useState } from "react"
+import { Link } from "react-router-dom"
 
 interface TopBarProps {
-  menu?: React.ReactNode;
-  title?: string;
-  backButton?: boolean;
+  menu?: React.ReactNode
+  title?: string
+  backButton?: boolean
 }
 
 export default function TopBar(props: TopBarProps): JSX.Element {
@@ -20,35 +20,26 @@ export default function TopBar(props: TopBarProps): JSX.Element {
             <span className="material text-3xl">arrow_back</span>
           </Link>
         )}
-        {props.title && (
-          <div className="text-2xl font-medium">{props.title}</div>
-        )}
+        {props.title && <div className="text-2xl font-medium">{props.title}</div>}
       </div>
 
       <div className="grow"></div>
       <UserProfile />
     </div>
-  );
+  )
 }
 
 function UserProfile(): JSX.Element {
-  const userProfile = useUserProfileStore();
-  const [isMenuOpen, setMenuOpen] = useState(false);
+  const userProfile = useUserProfileStore()
+  const [isMenuOpen, setMenuOpen] = useState(false)
 
   return (
-    <div
-      className="flex items-center gap-2 cursor-pointer"
-      onClick={() => !isMenuOpen && setMenuOpen(true)}
-    >
+    <div className="flex items-center gap-2 cursor-pointer" onClick={() => !isMenuOpen && setMenuOpen(true)}>
       {userProfile.user ? (
         <>
           <div>{userProfile.user.displayName}</div>
           {userProfile.user.photoURL ? (
-            <img
-              alt="User profile"
-              src={userProfile.user.photoURL}
-              className="w-10 h-10 rounded-full"
-            />
+            <img alt="User profile" src={userProfile.user.photoURL} className="w-10 h-10 rounded-full" />
           ) : (
             <div className="text-green-400">🟢</div>
           )}
@@ -61,31 +52,27 @@ function UserProfile(): JSX.Element {
       )}
       {isMenuOpen && <UserMenu setMenuOpen={setMenuOpen} />}
     </div>
-  );
+  )
 }
 
-function UserMenu({
-  setMenuOpen,
-}: {
-  setMenuOpen: (value: boolean) => void;
-}): JSX.Element {
-  const { user } = useUserProfileStore();
-  const menuRef = useRef<HTMLDivElement>(null);
-  const { setLoginModalOpen } = useUILayoutStore();
+function UserMenu({ setMenuOpen }: { setMenuOpen: (value: boolean) => void }): JSX.Element {
+  const { user } = useUserProfileStore()
+  const menuRef = useRef<HTMLDivElement>(null)
+  const { setLoginModalOpen } = useUILayoutStore()
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      const target = event.target as HTMLElement;
+      const target = event.target as HTMLElement
       if (menuRef.current && !menuRef.current.contains(target)) {
-        setMenuOpen(false);
+        setMenuOpen(false)
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside)
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [menuRef, setMenuOpen]);
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [menuRef, setMenuOpen])
 
   return (
     <div
@@ -99,8 +86,8 @@ function UserMenu({
         <MenuItemButton
           text="Logout"
           onClick={() => {
-            logout();
-            setMenuOpen(false);
+            logout()
+            setMenuOpen(false)
           }}
         />
       )}
@@ -108,36 +95,31 @@ function UserMenu({
         <MenuItemButton
           text="Login"
           onClick={() => {
-            setMenuOpen(false);
-            setLoginModalOpen(true);
+            setMenuOpen(false)
+            setLoginModalOpen(true)
           }}
         />
       )}
     </div>
-  );
+  )
 }
 
-function MenuItemButton(props: {
-  text: string;
-  href?: string;
-  onClick?: () => void;
-}): JSX.Element | null {
-  const className =
-    "text-left w-full p-2 mx-2 min-w-32 hover:bg-slate-500 active:bg-slate-700";
+function MenuItemButton(props: { text: string; href?: string; onClick?: () => void }): JSX.Element | null {
+  const className = "text-left w-full p-2 mx-2 min-w-32 hover:bg-slate-500 active:bg-slate-700"
   // Regular button where we subscribe to onClick event
   if (props.onClick) {
     return (
       <button className={className} onClick={props.onClick}>
         {props.text}
       </button>
-    );
+    )
   } else if (props.href) {
     return (
       // eslint-disable-next-line react/jsx-no-undef
       <Link className={className} to={props.href}>
         {props.text}
       </Link>
-    );
+    )
   }
-  return null;
+  return null
 }

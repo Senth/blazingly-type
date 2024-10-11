@@ -200,4 +200,4 @@ export const bigrams = [
   "ki",
   "rk",
   "ys",
-];
+]

@@ -1,20 +1,20 @@
-import { persist } from "zustand/middleware";
-import { create } from "zustand";
-import { Lesson } from "@models/lesson";
+import { persist } from "zustand/middleware"
+import { create } from "zustand"
+import { Lesson } from "@models/lesson"
 
 interface LessonEditorStore {
-  isEditorOpen: boolean;
-  isAdvancedOpen: boolean;
-  setAdvancedOpen: (open: boolean) => void;
-  lesson: Lesson;
-  newLesson: () => void;
-  editLesson(lesson: Lesson): void;
-  setLesson(lesson: Lesson): void;
-  setDelimiter(enabled: boolean, value?: string): void;
-  setKeepSpace(enabled: boolean): void;
-  setChorded(enabled: boolean): void;
-  close(): void;
-  copy(): void;
+  isEditorOpen: boolean
+  isAdvancedOpen: boolean
+  setAdvancedOpen: (open: boolean) => void
+  lesson: Lesson
+  newLesson: () => void
+  editLesson(lesson: Lesson): void
+  setLesson(lesson: Lesson): void
+  setDelimiter(enabled: boolean, value?: string): void
+  setKeepSpace(enabled: boolean): void
+  setChorded(enabled: boolean): void
+  close(): void
+  copy(): void
 }
 
 const useLessonEditorStore = create<LessonEditorStore>()(
@@ -28,28 +28,28 @@ const useLessonEditorStore = create<LessonEditorStore>()(
       editLesson: (lesson: Lesson) => set({ lesson, isEditorOpen: true }),
       setLesson: (lesson: Lesson) => set({ lesson }),
       setDelimiter: (enabled, value) => {
-        const { lesson } = get();
+        const { lesson } = get()
         if (!lesson.settings) {
-          lesson.settings = {};
+          lesson.settings = {}
         }
-        lesson.settings.delimiter = { enabled, value };
-        set({ lesson });
+        lesson.settings.delimiter = { enabled, value }
+        set({ lesson })
       },
       setKeepSpace: (enabled) => {
-        const { lesson } = get();
+        const { lesson } = get()
         if (!lesson.settings) {
-          lesson.settings = {};
+          lesson.settings = {}
         }
-        lesson.settings.keepSpaces = enabled;
-        set({ lesson });
+        lesson.settings.keepSpaces = enabled
+        set({ lesson })
       },
       setChorded: (enabled) => {
-        const { lesson } = get();
+        const { lesson } = get()
         if (!lesson.settings) {
-          lesson.settings = {};
+          lesson.settings = {}
         }
-        lesson.settings.chorded = enabled;
-        set({ lesson });
+        lesson.settings.chorded = enabled
+        set({ lesson })
       },
       close: () => set({ isEditorOpen: false }),
       copy: () =>
@@ -60,8 +60,8 @@ const useLessonEditorStore = create<LessonEditorStore>()(
     }),
     {
       name: "lesson-editor",
-    },
-  ),
-);
+    }
+  )
+)
 
-export default useLessonEditorStore;
+export default useLessonEditorStore

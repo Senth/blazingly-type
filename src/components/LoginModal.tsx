@@ -1,12 +1,12 @@
-import useUILayoutStore from "@stores/uiLayout";
-import { ModalContent } from "./Modals";
-import { signInWithGoogle } from "@auth";
+import useUILayoutStore from "@stores/uiLayout"
+import { ModalContent } from "./Modals"
+import { signInWithGoogle } from "@auth"
 
 export default function LoginModal(): JSX.Element | null {
-  const { isLoginModalOpen, setLoginModalOpen } = useUILayoutStore();
+  const { isLoginModalOpen, setLoginModalOpen } = useUILayoutStore()
 
   if (!isLoginModalOpen) {
-    return null;
+    return null
   }
 
   return (
@@ -19,45 +19,35 @@ export default function LoginModal(): JSX.Element | null {
           colorName="blue"
           onClick={() => {
             signInWithGoogle().then(() => {
-              setLoginModalOpen(false);
-            });
+              setLoginModalOpen(false)
+            })
           }}
         />
-        <LoginButton
-          className="mt-3"
-          text="Cancel"
-          onClick={() => setLoginModalOpen(false)}
-        />
+        <LoginButton className="mt-3" text="Cancel" onClick={() => setLoginModalOpen(false)} />
       </div>
     </ModalContent>
-  );
+  )
 }
 
 interface LoginButtonProps {
-  className?: string;
-  iconUrl?: string;
-  iconAlt?: string;
-  text: string;
-  colorName?: string;
-  onClick: () => void;
+  className?: string
+  iconUrl?: string
+  iconAlt?: string
+  text: string
+  colorName?: string
+  onClick: () => void
 }
 
 function LoginButton(props: LoginButtonProps): JSX.Element {
-  const colorName = props.colorName || "gray";
+  const colorName = props.colorName || "gray"
 
   return (
     <button
       className={`flex h-10 bg-${colorName}-500 hover:bg-${colorName}-400 active:bg-${colorName}-600 items-center uppercase font-medium rounded-full ${props.className}`}
       onClick={() => props.onClick()}
     >
-      {props.iconUrl && (
-        <img
-          src={props.iconUrl}
-          alt={props.iconAlt}
-          className="w-10 h-10 rounded-full bg-white p-2"
-        />
-      )}
+      {props.iconUrl && <img src={props.iconUrl} alt={props.iconAlt} className="w-10 h-10 rounded-full bg-white p-2" />}
       <div className="grow px-3">{props.text}</div>
     </button>
-  );
+  )
 }

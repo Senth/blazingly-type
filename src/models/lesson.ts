@@ -1,21 +1,21 @@
-import { bigrams } from "@data/bigrams";
-import { tetragrams } from "@data/tetragrams";
-import { trigrams } from "@data/trigrams";
-import { SingleSetting } from "./settings";
+import { bigrams } from "@data/bigrams"
+import { tetragrams } from "@data/tetragrams"
+import { trigrams } from "@data/trigrams"
+import { SingleSetting } from "./settings"
 
 export interface Lesson {
-  id?: string;
-  custom: boolean;
-  title: string;
-  shortDescription?: string;
-  words: string[];
-  settings?: LessonSettings;
+  id?: string
+  custom: boolean
+  title: string
+  shortDescription?: string
+  words: string[]
+  settings?: LessonSettings
 }
 
 export interface LessonSettings {
-  delimiter?: SingleSetting<string>;
-  keepSpaces?: boolean;
-  chorded?: boolean;
+  delimiter?: SingleSetting<string>
+  keepSpaces?: boolean
+  chorded?: boolean
 }
 
 export namespace Lesson {
@@ -25,7 +25,7 @@ export namespace Lesson {
       title: "",
       words: [],
       settings: {},
-    };
+    }
   }
 }
 
@@ -51,4 +51,4 @@ export const defaultLessons: Lesson[] = [
     shortDescription: "Practice typing tetragrams",
     words: tetragrams,
   },
-];
+]
