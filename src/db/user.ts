@@ -1,47 +1,47 @@
-import { getUserId } from "@auth";
-import "@auth";
-import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
-import { User } from "@models/user";
-import { Exercises } from "@models/exercise";
+import { getUserId } from "@auth"
+import "@auth"
+import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore"
+import { User } from "@models/user"
+import { Exercises } from "@models/exercise"
 
 export async function saveExercises(exercises: Exercises): Promise<void> {
-  const userId = getUserId();
+  const userId = getUserId()
   if (!userId) {
-    return;
+    return
   }
 
-  const docRef = doc(getFirestore(), "users", userId);
-  const docSnap = await getDoc(docRef);
+  const docRef = doc(getFirestore(), "users", userId)
+  const docSnap = await getDoc(docRef)
 
   if (!docSnap.exists()) {
-    return;
+    return
   }
 
   const updatedData: User = {
     ...(docSnap.data() as User),
     exercisesJSON: JSON.stringify(exercises),
-  };
-  await setDoc(docRef, updatedData);
+  }
+  await setDoc(docRef, updatedData)
 }
 
 export async function fetchExercises(): Promise<Exercises | null> {
-  const userId = getUserId();
+  const userId = getUserId()
   if (!userId) {
-    return null;
+    return null
   }
 
-  const docRef = doc(getFirestore(), "users", userId);
-  const docSnap = await getDoc(docRef);
+  const docRef = doc(getFirestore(), "users", userId)
+  const docSnap = await getDoc(docRef)
 
   if (!docSnap.exists()) {
-    return null;
+    return null
   }
 
-  const user = docSnap.data() as User;
+  const user = docSnap.data() as User
 
   if (!user.exercisesJSON) {
-    return null;
+    return null
   }
 
-  return JSON.parse(user.exercisesJSON);
+  return JSON.parse(user.exercisesJSON)
 }

@@ -200,4 +200,4 @@ export const trigrams = [
   "app",
   "lar",
   "ntr",
-];
+]

@@ -1,10 +1,10 @@
-import React from "react";
-import "./App.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import TypingPracticePage from "@pages/TypingPractice";
-import Modals from "@components/Modals";
-import Settings from "@pages/Settings";
-import Words from "@pages/Words";
+import React from "react"
+import "./App.css"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import TypingPracticePage from "@pages/TypingPractice"
+import Modals from "@components/Modals"
+import Settings from "@pages/Settings"
+import Words from "@pages/Words"
 
 function App() {
   return (
@@ -18,7 +18,7 @@ function App() {
       </Router>
       <Modals />
     </>
-  );
+  )
 }
 
-export default App;
+export default App

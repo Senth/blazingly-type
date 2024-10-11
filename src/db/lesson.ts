@@ -1,57 +1,48 @@
-import { defaultLessons, Lesson } from "@models/lesson";
-import useUserProfileStore from "@stores/userProfile";
-import {
-  collection,
-  doc,
-  getDocs,
-  getFirestore,
-  setDoc,
-} from "firebase/firestore";
-import useSWR from "swr";
+import { defaultLessons, Lesson } from "@models/lesson"
+import useUserProfileStore from "@stores/userProfile"
+import { collection, doc, getDocs, getFirestore, setDoc } from "firebase/firestore"
+import useSWR from "swr"
 
-const firestore = getFirestore();
+const firestore = getFirestore()
 
 export async function fetchLessons(uid?: string): Promise<Lesson[]> {
   if (!uid) {
-    return defaultLessons;
+    return defaultLessons
   }
 
-  const lessonsRef = collection(firestore, "users", uid, "lessons");
+  const lessonsRef = collection(firestore, "users", uid, "lessons")
   return getDocs(lessonsRef).then((querySnapshot) => {
     const lessons = querySnapshot.docs.map((doc) => ({
       ...(doc.data() as Lesson),
       id: doc.id,
-    }));
-    return lessons;
-  });
+    }))
+    return lessons
+  })
 }
 
-export async function upsertLesson(
-  uid: string,
-  lesson: Lesson,
-): Promise<Lesson> {
-  const lessonsRef = collection(firestore, "users", uid, "lessons");
-  const docRef = lesson.id ? doc(lessonsRef, lesson.id) : doc(lessonsRef);
+export async function upsertLesson(uid: string, lesson: Lesson): Promise<Lesson> {
+  const lessonsRef = collection(firestore, "users", uid, "lessons")
+  const docRef = lesson.id ? doc(lessonsRef, lesson.id) : doc(lessonsRef)
 
   // Update
   if (lesson.id) {
-    delete lesson.id;
+    delete lesson.id
     return setDoc(docRef, lesson).then(() => {
-      return lesson;
-    });
+      return lesson
+    })
   }
 
   // Create
-  const newLesson = { ...lesson, custom: true };
+  const newLesson = { ...lesson, custom: true }
 
   return setDoc(docRef, newLesson).then(() => {
-    return { ...newLesson, id: docRef.id };
-  });
+    return { ...newLesson, id: docRef.id }
+  })
 }
 
 export function useLessons() {
-  const { user } = useUserProfileStore();
-  const uid = user?.uid;
+  const { user } = useUserProfileStore()
+  const uid = user?.uid
 
-  return useSWR(uid, fetchLessons);
+  return useSWR(uid, fetchLessons)
 }

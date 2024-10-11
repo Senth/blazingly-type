@@ -1,31 +1,28 @@
-import { useLessons } from "@db/lesson";
-import { defaultLessons, Lesson } from "@models/lesson";
-import useExerciseStore from "@stores/exercise";
-import useLessonEditorStore from "@stores/lessonEditor";
-import useUILayoutStore from "@stores/uiLayout";
-import { useState } from "react";
+import { useLessons } from "@db/lesson"
+import { defaultLessons, Lesson } from "@models/lesson"
+import useExerciseStore from "@stores/exercise"
+import useLessonEditorStore from "@stores/lessonEditor"
+import useUILayoutStore from "@stores/uiLayout"
+import { useState } from "react"
 
 export function LessonMenuClosed(): JSX.Element | null {
-  const { isLessonMenuOpen, setLessonMenuOpen } = useUILayoutStore();
+  const { isLessonMenuOpen, setLessonMenuOpen } = useUILayoutStore()
 
   return (
-    <div
-      className="text-2xl flex font-medium cursor-pointer"
-      onClick={() => setLessonMenuOpen(!isLessonMenuOpen)}
-    >
+    <div className="text-2xl flex font-medium cursor-pointer" onClick={() => setLessonMenuOpen(!isLessonMenuOpen)}>
       <span className="material text-3xl mr-3 hover:text-slate-300">menu</span>
       <span>Lessons </span>
     </div>
-  );
+  )
 }
 
 export function LessonMenu(): JSX.Element | null {
-  const { isLessonMenuOpen } = useUILayoutStore();
-  const userLessons = useLessons();
-  const { newLesson } = useLessonEditorStore();
+  const { isLessonMenuOpen } = useUILayoutStore()
+  const userLessons = useLessons()
+  const { newLesson } = useLessonEditorStore()
 
   if (!isLessonMenuOpen) {
-    return null;
+    return null
   }
 
   return (
@@ -47,8 +44,8 @@ export function LessonMenu(): JSX.Element | null {
       <button
         className="mt-5 text-xl flex hover:bg-green-600 items-center"
         onClick={(e) => {
-          e.stopPropagation();
-          newLesson();
+          e.stopPropagation()
+          newLesson()
         }}
       >
         <div className="p-2">New Lesson...</div>
@@ -56,50 +53,39 @@ export function LessonMenu(): JSX.Element | null {
         <span className="material text-3xl mr-2">add</span>
       </button>
     </div>
-  );
+  )
 }
 
 function LessonItem({ lesson }: { lesson: Lesson }): JSX.Element {
-  const { lesson: currentLesson, setLesson } = useExerciseStore();
-  const isActive = currentLesson.id === lesson.id;
-  const [hovering, setHovering] = useState(false);
-  const { editLesson } = useLessonEditorStore();
+  const { lesson: currentLesson, setLesson } = useExerciseStore()
+  const isActive = currentLesson.id === lesson.id
+  const [hovering, setHovering] = useState(false)
+  const { editLesson } = useLessonEditorStore()
 
-  let stateClass = "";
+  let stateClass = ""
   if (isActive) {
-    stateClass = "cursor-default bg-slate-700";
+    stateClass = "cursor-default bg-slate-700"
   } else if (hovering) {
-    stateClass = "cursor-pointer hover:bg-slate-500";
+    stateClass = "cursor-pointer hover:bg-slate-500"
   }
 
   return (
-    <div
-      className={`w-72 text-xl flex ${stateClass}`}
-      onClick={() => setLesson(lesson)}
-    >
-      <div
-        className="p-2 truncate"
-        onMouseEnter={() => setHovering(true)}
-        onMouseLeave={() => setHovering(false)}
-      >
+    <div className={`w-72 text-xl flex ${stateClass}`} onClick={() => setLesson(lesson)}>
+      <div className="p-2 truncate" onMouseEnter={() => setHovering(true)} onMouseLeave={() => setHovering(false)}>
         {lesson.title}
       </div>
-      <div
-        className="grow"
-        onMouseEnter={() => setHovering(true)}
-        onMouseLeave={() => setHovering(false)}
-      ></div>
+      <div className="grow" onMouseEnter={() => setHovering(true)} onMouseLeave={() => setHovering(false)}></div>
       <button className="hover:text-green-400 pr-2">
         <span
           className="material text-3xl w-8 h-8"
           onClick={(e) => {
-            e.stopPropagation();
-            editLesson(lesson);
+            e.stopPropagation()
+            editLesson(lesson)
           }}
         >
           edit
         </span>
       </button>
     </div>
-  );
+  )
 }

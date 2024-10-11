@@ -200,4 +200,4 @@ export const tetragrams = [
   "char",
   "once",
   "enta",
-];
+]

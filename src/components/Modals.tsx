@@ -1,5 +1,5 @@
-import LessonEditorModal from "./LessonEditor";
-import LoginModal from "./LoginModal";
+import LessonEditorModal from "./LessonEditor"
+import LoginModal from "./LoginModal"
 
 export default function Modals(): JSX.Element | null {
   return (
@@ -7,21 +7,19 @@ export default function Modals(): JSX.Element | null {
       <LessonEditorModal />
       <LoginModal />
     </>
-  );
+  )
 }
 
 export function ModalBackground(): JSX.Element {
-  return (
-    <div className="absolute top-0 left-0 w-full h-full bg-zinc-900 opacity-60"></div>
-  );
+  return <div className="absolute top-0 left-0 w-full h-full bg-zinc-900 opacity-60"></div>
 }
 
 export interface ModalContentProps {
-  children: React.ReactNode;
-  title: string;
-  full?: boolean;
-  grow?: boolean;
-  buttons?: React.ReactNode[];
+  children: React.ReactNode
+  title: string
+  full?: boolean
+  grow?: boolean
+  buttons?: React.ReactNode[]
 }
 
 export function ModalContent(props: ModalContentProps): JSX.Element {
@@ -48,5 +46,5 @@ export function ModalContent(props: ModalContentProps): JSX.Element {
         </div>
       </div>
     </>
-  );
+  )
 }
