@@ -165,6 +165,11 @@ async function generateExercise(exercises: Exercises): Promise<string[][]> {
       }
     }
 
+    // We need to add the first word at the end of the exercise since we can't calculate the first word's WPM correctly.
+    if (exercises.lesson.settings?.chorded) {
+      exercise.push(exercise[0]);
+    }
+
     exercises.allExercises.push(exercise);
   }
 

@@ -10,7 +10,7 @@ interface WpmCounterStore {
   setExercise: (exercise: string, words: string[]) => void;
   resetExercise: () => void;
   getWpm: () => number;
-  getWordWpm: (word: string) => number;
+  getWordWpm: (word: string, chorded?: boolean) => number;
 }
 
 const useWpmCounterStore = create<WpmCounterStore>((set, get) => ({
@@ -64,18 +64,18 @@ const useWpmCounterStore = create<WpmCounterStore>((set, get) => ({
     const wpm = lastSetCharIndex / charatersPerWord / time;
     return wpm;
   },
-  getWordWpm: (word: string) => {
+  getWordWpm: (word: string, chorded?: boolean) => {
     const { charTime, lastSetCharIndex, exercise, words } = get();
     if (charTime.length === 0) {
       return 0;
     }
 
-    const wordIndicies = findWordIndicies(
-      exercise,
-      words,
-      word,
-      lastSetCharIndex,
-    );
+    let wordIndicies: WordIndex[] = [];
+    if (chorded) {
+      wordIndicies = findChordIndicies(exercise, word);
+    } else {
+      wordIndicies = findWordIndicies(exercise, words, word, lastSetCharIndex);
+    }
 
     if (wordIndicies.length === 0) {
       return 0;
@@ -119,8 +119,8 @@ function findWordIndicies(
   words: string[],
   word: string,
   maxIndex: number,
-) {
-  const wordInfo = getPrevCurrentAndNextInfo(words, word);
+): WordIndex[] {
+  const wordInfo = getCurrentAndNextInfo(words, word);
 
   let startIndex = 0;
   let result: WordIndex[] = [];
@@ -164,6 +164,33 @@ function findWordIndicies(
   return result;
 }
 
+function findChordIndicies(exercise: string, word: string): WordIndex[] {
+  let startIndex = 0;
+  let result: WordIndex[] = [];
+  while ((startIndex = exercise.indexOf(word, startIndex)) !== -1) {
+    // "hello", "world"     -> " hello world hello world"
+    // hello:       		      	se          se
+    // world:                         se          se
+    // "hello", " world "   -> " hello world hello world "
+    // hello:       		      	se          se
+    // world:                        se          se
+    // " hello ", " world " -> " hello  world  hello  world "
+    // hello:       		      	N/A          se
+    // world:                         se            se
+    // Note that the first word in an exercise can't be calculated correctly if we don't add a space or something else before it.
+
+    // If the word is the first character in the exercise, we can't calculate the WPM correctly. Skip this word.
+    if (startIndex === 0) {
+      startIndex += word.length;
+      continue;
+    }
+
+    result.push({ start: startIndex - 1, end: startIndex });
+    startIndex += word.length;
+  }
+  return result;
+}
+
 interface WordInfo {
   startsWithSpace: boolean;
   endsWithSpace: boolean;
@@ -174,7 +201,7 @@ interface WordsInfo {
   next: WordInfo;
 }
 
-function getPrevCurrentAndNextInfo(words: string[], word: string): WordsInfo {
+function getCurrentAndNextInfo(words: string[], word: string): WordsInfo {
   const next = getNextWord(words, word);
 
   return {

@@ -70,6 +70,10 @@ export namespace Word {
     return word;
   }
 
+  export function getHighestWpm(word: Word, chorded?: boolean): number {
+    return chorded ? (word.chordHighest?.wpm ?? 0) : word.highest.wpm;
+  }
+
   export function isLatest(word: any): word is Word {
     return word.version === latestVersion;
   }

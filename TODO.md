@@ -3,7 +3,6 @@
 ## Next Up
 
 - Chording
-  - WPM calculation for chording lesson
   - Test chording lesson
   - Add chording WPM to words page (if there is any chording word)
 - UseStorage better caching for words

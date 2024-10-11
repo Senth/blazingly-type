@@ -358,6 +358,7 @@ function TypingField(): JSX.Element {
     setPreviousExercise,
     getUniqueWords,
     target,
+    lesson,
   } = useExerciseStore();
   const wpmCounter = useWpmCounterStore();
   const currentWords = getCurrentWords() || [];
@@ -367,9 +368,10 @@ function TypingField(): JSX.Element {
   const timeout = useSettingsStore((state) => state.exercise.autoSkipTime);
   const timer = useTimerStore();
   const targetWpms = wordsResponse.data
-    ? wordsResponse.data.map((word) =>
-        calculateTargetWpm(target, word.highest.wpm).toFixed(1),
-      )
+    ? wordsResponse.data.map((word) => {
+        const highestWpm = Word.getHighestWpm(word, lesson.settings?.chorded);
+        return calculateTargetWpm(target, highestWpm).toFixed(1);
+      })
     : Array.from({ length: uniqueWords.length }, () => "0.0");
 
   interface BestAttempt {
@@ -447,7 +449,7 @@ function TypingField(): JSX.Element {
       let metTarget = true;
       for (let i = 0; i < uniqueWords.length; i++) {
         const word = currentWords[i];
-        const wpm = wpmCounter.getWordWpm(word);
+        const wpm = wpmCounter.getWordWpm(word, lesson.settings?.chorded);
 
         const diffWpm = parseFloat(targetWpms[i]) - parseFloat(wpm.toFixed(1));
         if (diffWpm > 0) {
@@ -487,9 +489,15 @@ function TypingField(): JSX.Element {
           word: currentWords[i],
           wpm: wordWpms[i].toFixed(1),
           targetWpm: targetWpms[i],
-          isHighscore: wordWpms[i] > words[i].highest.wpm,
+          isHighscore:
+            wordWpms[i] >
+            Word.getHighestWpm(words[i], lesson.settings?.chorded),
         });
-        words[i] = Word.updateWpm(words[i], wordWpms[i]);
+        if (lesson.settings?.chorded) {
+          words[i] = Word.updateChordWpm(words[i], wordWpms[i]);
+        } else {
+          words[i] = Word.updateWpm(words[i], wordWpms[i]);
+        }
       }
       const previousExercise: PreviousExercise = {
         words: previousWords,
@@ -532,7 +540,8 @@ function TypingField(): JSX.Element {
 
 function WPMDisplay(): JSX.Element {
   const wpmCounter = useWpmCounterStore();
-  const { getUniqueWords, previousExercise, target } = useExerciseStore();
+  const { getUniqueWords, previousExercise, target, lesson } =
+    useExerciseStore();
   const uniqueWords = getUniqueWords();
   const wordsResponse = useWords(uniqueWords);
   const timer = useTimerStore();
@@ -569,10 +578,11 @@ function WPMDisplay(): JSX.Element {
       !wordsResponse?.isLoading &&
       wordsResponse?.data?.length === uniqueWords.length
     ) {
-      targetColumn.text = calculateTargetWpm(
-        target,
-        wordsResponse.data[i].highest.wpm,
-      ).toFixed(1);
+      const highestWpm = Word.getHighestWpm(
+        wordsResponse.data[i],
+        lesson.settings?.chorded,
+      );
+      targetColumn.text = calculateTargetWpm(target, highestWpm).toFixed(1);
     }
 
     // Calculate color based on how far from the target WPM the user is
@@ -580,7 +590,7 @@ function WPMDisplay(): JSX.Element {
     // Above target = green
     // 0-20 WPM below target = gradient from yellow to red
     // Below 20 WPM = red
-    const wpm = wpmCounter.getWordWpm(word);
+    const wpm = wpmCounter.getWordWpm(word, lesson.settings?.chorded);
     wpmColumn.text = wpm.toFixed(1);
     if (wpm === 0) {
       wpmColumn.className = "text-white";
